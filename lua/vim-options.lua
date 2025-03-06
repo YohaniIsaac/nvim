@@ -15,16 +15,16 @@ vim.opt.relativenumber = true
 vim.opt.shortmess:append("A")
 
 -- Mover a la ventana izquierda (Alt + j)
-vim.keymap.set('n', '<A-j>', '<C-w>h', { noremap = true, silent = true, desc = 'Mover a la ventana izquierda' })
+vim.keymap.set('n', '<C-Right>', '<C-w>h', { noremap = true, silent = true, desc = 'Mover a la ventana izquierda' })
 
 -- Mover a la ventana derecha (Alt + l)
-vim.keymap.set('n', '<A-l>', '<C-w>l', { noremap = true, silent = true, desc = 'Mover a la ventana derecha' })
+vim.keymap.set('n', '<C-Left>', '<C-w>l', { noremap = true, silent = true, desc = 'Mover a la ventana derecha' })
 
 -- Mover a la ventana de arriba (Alt + i)
-vim.keymap.set('n', '<A-i>', '<C-w>k', { noremap = true, silent = true, desc = 'Mover a la ventana de arriba' })
+vim.keymap.set('n', '<C-Up>', '<C-w>k', { noremap = true, silent = true, desc = 'Mover a la ventana de arriba' })
 
 -- Mover a la ventana de abajo (Alt + k)
-vim.keymap.set('n', '<A-k>', '<C-w>j', { noremap = true, silent = true, desc = 'Mover a la ventana de abajo' })
+vim.keymap.set('n', '<C-Down>', '<C-w>j', { noremap = true, silent = true, desc = 'Mover a la ventana de abajo' })
 -- Función para cambiar de ventana repetidamente
 local function repeatable_move(direction)
     return function()
