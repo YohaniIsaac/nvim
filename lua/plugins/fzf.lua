@@ -1,11 +1,10 @@
+
 return {
   "ibhagwan/fzf-lua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     local fzf = require("fzf-lua")
     -- Configuración para búsqueda de archivos
-    -- Usamos --full-path para que fd busque el patrón en la ruta completa
-    -- y agregamos --regex para permitir búsquedas exactas
     local files_config = {
       normal = "fd --type f --follow --case-sensitive --full-path --regex "
         .. "--exclude .git "
@@ -17,7 +16,7 @@ return {
         .. "--exclude '*.rst' "
         .. "--exclude '*.json' "
         .. "--exclude '*.ninja' "
-        .. "--exclude '*.map' ",  -- Excluir archivos .map
+        .. "--exclude '*.map' ",
       hidden = "fd --type f --hidden --follow --no-ignore --case-sensitive --full-path --regex "
         .. "--exclude .git "
         .. "--exclude node_modules "
@@ -28,10 +27,10 @@ return {
         .. "--exclude '*.rst' "
         .. "--exclude '*.json' "
         .. "--exclude '*.ninja' "
-        .. "--exclude '*.map' "  -- Excluir archivos .map
+        .. "--exclude '*.map' "
     }
+
     -- Configuración para grep
-    -- Usamos -w para que rg busque palabras exactas
     local grep_config = {
       normal = "rg --column --line-number --no-heading --color=always --case-sensitive -w "
         .. "--max-columns=150 "
@@ -58,6 +57,7 @@ return {
         .. "--glob '!*.map' "
         .. "--glob '!.env' "
     }
+
     _G.hidden_search = true
     local config = {
       winopts = {
@@ -92,7 +92,6 @@ return {
         git_icons = true,
         file_icons = true,
         color_icons = true,
-        -- Configuramos fzf para que use coincidencia exacta por defecto
         fzf_opts = {
           ['--exact'] = true,
         },
@@ -104,7 +103,6 @@ return {
         file_icons = true,
         color_icons = true,
         multiprocess = true,
-        -- Configuramos fzf para que use coincidencia exacta por defecto
         fzf_opts = {
           ['--exact'] = true,
         },
@@ -115,13 +113,14 @@ return {
         file_icons = true,
         color_icons = true,
         sort_lastused = true,
-        -- Configuramos fzf para que use coincidencia exacta por defecto
         fzf_opts = {
           ['--exact'] = true,
         },
       },
     }
+
     fzf.setup(config)
+
     -- Función para alternar búsqueda en archivos ocultos
     local function toggle_hidden_search()
       _G.hidden_search = not _G.hidden_search
@@ -133,18 +132,6 @@ return {
     end
 
     vim.api.nvim_create_user_command('ToggleHiddenSearch', toggle_hidden_search, {})
-
-    -- Nueva función para buscar la palabra bajo el cursor
-    local function grep_cword()
-      local word = vim.fn.expand("<cword>")
-      require('fzf-lua').grep({ search = word })
-    end
--- Nuevo mapeo de teclas para buscar la palabra bajo el cursor
-    vim.keymap.set('n', '<leader>gg', grep_cword, {
-      desc = "Buscar palabra bajo el cursor",
-      silent = true
-    })
-
 
   end,
 }

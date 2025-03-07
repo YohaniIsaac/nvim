@@ -66,17 +66,31 @@ vim.keymap.set("n", "<S-Tab>", vim.cmd.bprevious)                               
 -- Mapea Ctrl+W en modo terminal para permitir la navegación entre ventanas
 vim.api.nvim_set_keymap('t', '<C-w>', [[<C-\><C-n><C-w>]], { noremap = true, silent = true })
 
+
 -- then you need to set the option below.
 vim.g.lazyvim_picker = "telescope"
-
--- Keymaps de búsqueda con fzf-lua
+-- Keymaps para buscar archivos y hacer live grep con Telescope
+local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>ff", function()
-    require("fzf-lua").files()
+    builtin.find_files({
+        hidden = true,
+        no_ignore = true,
+    })
 end, { noremap = true, silent = true, desc = "Find files" })
-
 vim.keymap.set("n", "<leader>fg", function()
-    require("fzf-lua").live_grep()
+    builtin.live_grep({
+        hidden = true,
+        no_ignore = true,
+    })
 end, { noremap = true, silent = true, desc = "Live grep" })
+-- Nuevo keymap para buscar la palabra bajo el cursor en Telescope
+vim.keymap.set("n", "<leader>gg", function()
+    builtin.grep_string({
+        word_match = "-w",
+        hidden = true,
+        no_ignore = true,
+    })
+end, { noremap = true, silent = true, desc = "Buscar palabra bajo el cursor" })
 
 --remaps for harpoon
 local harpoon = require("harpoon")
