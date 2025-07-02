@@ -1,5 +1,7 @@
----PLUGIN AUTOCOMPLETADO---
-----------------------------
+-----------------------------
+--- PLUGIN AUTOCOMPLETADO ---
+-----------------------------
+
 return {
   -- Configuración base de nvim-cmp
   {

@@ -1,4 +1,6 @@
-
+------------------------------
+--- COMENTAR Y DESCOMENTAR ---
+------------------------------
 return {
   {
     "numToStr/Comment.nvim",

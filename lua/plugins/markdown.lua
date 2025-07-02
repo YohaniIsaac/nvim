@@ -12,6 +12,12 @@ return {
 
             -- Asegurarse de que se active al inicio
             vim.cmd('GitBlameEnable')
+
+            -- Personalizar el color del texto de git-blame usando el grupo 'Comment'
+            vim.cmd([[
+                highlight Comment guifg=#0c4000 guibg=NONE ctermfg=214 ctermbg=NONE
+            ]])
+
         end,
     }
 }

@@ -1,19 +1,38 @@
 return {
-    {
-        'lewis6991/gitsigns.nvim',
-        event = { "BufReadPre", "BufNewFile" },
-        config = function()
-            require('gitsigns').setup({
-                signs = {
-                    add          = { text = '│' },
-                    change       = { text = '│' },
-                    delete       = { text = '_' },
-                    topdelete    = { text = '‾' },
-                    changedelete = { text = '~' },
-                    untracked    = { text = '┆' },
-                },
-                numhl      = true,  -- Esto activará el resaltado en la columna de números
-            })
-        end,
-    }
+    -- {
+    --     'lewis6991/gitsigns.nvim',
+    --     event = { "BufReadPre", "BufNewFile" },
+    --     config = function()
+    --         require('gitsigns').setup({
+
+    --                 add          = { text = '+' },
+    --                 change       = { text = '~' },
+    --                 delete       = { text = '_' },
+    --                 topdelete    = { text = '‾' },
+    --                 changedelete = { text = '~' },
+    --                 untracked    = { text = '┆' },
+    --             },
+    --             current_line_blame = true,  -- Muestra el autor de la línea actual
+    --             current_line_blame_opts = {
+    --                 virt_text = true,
+    --                 virt_text_pos = 'eol',    -- Muestra el autor al final de la línea
+    --                 delay = 1000,             -- Retraso para mostrar el autor
+    --             },
+    --             on_attach = function(bufnr)
+    --                 -- Mapeos personalizados para gitsigns (opcional)
+    --                 local gs = package.loaded.gitsigns
+    --                 vim.keymap.set('n', ']c', gs.next_hunk, { buffer = bufnr, desc = 'Next Hunk' })
+    --                 vim.keymap.set('n', '[c', gs.prev_hunk, { buffer = bufnr, desc = 'Previous Hunk' })
+    --             end,
+    --         })
+    --
+    --         -- Configuración de colores para los signos de Git
+    --         vim.cmd([[
+    --             highlight GitSignsAdd    guifg=#00ff00 ctermfg=2
+    --             highlight GitSignsChange guifg=#ffff00 ctermfg=3
+    --             highlight GitSignsDelete guifg=#ff0000 ctermfg=1
+    --             highlight GitSignsCurrentLineBlame guifg=#aaaaaa ctermfg=8
+    --         ]])
+    --     end,
+    -- }
 }

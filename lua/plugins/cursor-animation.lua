@@ -1,3 +1,7 @@
+--------------------------------------------------
+--- Efecto visual con el movimiento del cursor ---
+--------------------------------------------------
+
 return {
   "sphamba/smear-cursor.nvim",
 
