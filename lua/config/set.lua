@@ -45,3 +45,9 @@ vim.api.nvim_create_autocmd('CmdlineLeave', {
         end
     end,
 })
+
+-- Línea visual a los 100 caracteres
+vim.opt.colorcolumn = "100"
+
+-- Personalizar el color para que combine con tu tema
+vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#2a2a2a" })
