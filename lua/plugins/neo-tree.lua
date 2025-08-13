@@ -10,7 +10,6 @@ return {
         config = function()
             -- Aplicar el esquema de colores ANTES de configurar NeoTree
             -- vim.cmd("colorscheme tokyonight-moon")
-
             -- Forzar transparencia con un pequeño retraso
             vim.defer_fn(function()
                 vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE" })
@@ -38,7 +37,6 @@ return {
                         never_show = {         -- AÑADIDO: Lista de archivos que nunca mostrar
                             ".DS_Store",
                             "thumbs.db",
-                            ".git",            -- Opcional: puedes comentar esta línea si quieres ver .git
                         },
                         never_show_by_pattern = { -- AÑADIDO: Patrones que nunca mostrar
                             --".null-ls_*",
