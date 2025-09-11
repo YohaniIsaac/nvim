@@ -122,7 +122,19 @@ vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -2<CR>", { noremap = tru
 -- remap to replace words
 --vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, silent = true })
 -- Guarda el archivo actual
-vim.keymap.set('n', '<C-s>', '<cmd> w <CR>', opts)
+vim.keymap.set('n', '<C-s>', function()
+    -- Detectar si hay espacios en blanco al final de líneas
+    local has_whitespace = vim.fn.search('\\s\\+$', 'nw') > 0
+
+    if has_whitespace then
+        local choice = vim.fn.input("Clean whitespace? (y/n): ")
+        if choice:lower() == 'y' then
+            vim.cmd('StripWhitespace')
+        end
+    end
+
+    vim.cmd('write')
+end, { noremap = true, silent = true })
 
 -- Copiar el contenido de todo el archivo
 vim.keymap.set('n', '<leader>ya', 'ggVGy<C-o>', opts)
