@@ -6,8 +6,15 @@ return {
             local configs = require("nvim-treesitter.configs")
             configs.setup({
                 ensure_installed = {"python", "lua", "c", "javascript", "cmake", "yaml"},
-                highlight = { enable = true },
-                indent = { enable = true }
+                highlight = {
+                    enable = true,
+                    additional_vim_regex_highlighting = { "python" }
+                },
+                indent = { enable = true },
+                fold = {
+                    enable = true,
+                    disable = {},
+                }
             })
         end
     },
