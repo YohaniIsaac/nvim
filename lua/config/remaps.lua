@@ -113,11 +113,11 @@ vim.keymap.set('n', '<leader>6', function() harpoon:list():select(6) end)
 -- vim.keymap.set('n', '<Tab>', function() harpoon:list():prev() end)
 -- vim.keymap.set('n', '<S-Tab>', function() harpoon:list():next() end)
 
--- Redimensionar ventanas con Control + Shift + flechas
-vim.keymap.set("n", "<C-S-Down>", "<Cmd>resize -2<CR>", { noremap = true, silent = true, desc = "Disminuir altura de la ventana" })  -- Disminuir alto
-vim.keymap.set("n", "<C-S-Up>", "<Cmd>resize +2<CR>", { noremap = true, silent = true, desc = "Aumentar altura de la ventana" })   -- Aumentar alto
-vim.keymap.set("n", "<C-S-Right>", "<Cmd>vertical resize +2<CR>", { noremap = true, silent = true, desc = "Aumentar ancho de la ventana" })  -- Aumentar ancho
-vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -2<CR>", { noremap = true, silent = true, desc = "Disminuir ancho de la ventana" })  -- Disminuir ancho
+-- Mapeos estilo Vim tradicional (extendiendo <C-w>)
+vim.keymap.set("n", "<C-A-Down>", "<Cmd>resize -1<CR>", { noremap = true, silent = true, desc = "Disminuir altura de la ventana" })  -- Disminuir alto
+vim.keymap.set("n", "<C-A-Up>", "<Cmd>resize +1<CR>", { noremap = true, silent = true, desc = "Aumentar altura de la ventana" })   -- Aumentar alto
+vim.keymap.set("n", "<C-A-Right>", "<Cmd>vertical resize +1<CR>", { noremap = true, silent = true, desc = "Aumentar ancho de la ventana" })  -- Aumentar ancho
+vim.keymap.set("n", "<C-A-Left>", "<Cmd>vertical resize -1<CR>", { noremap = true, silent = true, desc = "Disminuir ancho de la ventana" })  -- Disminuir ancho
 
 -- remap to replace words
 --vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, silent = true })
@@ -210,3 +210,111 @@ end, { noremap = true, silent = true, desc = 'Intercambiar con ventana abajo' })
 
 -- Alternativa: Mapeo con Control+Escape para salir del modo terminal
 vim.api.nvim_set_keymap('t', '<C-Esc>', [[<C-\><C-n>]], { noremap = true, silent = true })
+
+-- Configuración para reemplazar palabras/texto en Neovim
+-- Agregar estas líneas a tu archivo lua/config/remaps.lua
+
+-- ============================================
+-- REEMPLAZO DE PALABRAS Y TEXTO
+-- ============================================
+
+-- 1. Reemplazar la palabra bajo el cursor en todo el archivo (con confirmación)
+-- Presiona <leader>rw y luego escribe la nueva palabra
+vim.keymap.set('n', '<leader>rw', ':%s/\\<<C-r><C-w>\\>//gc<Left><Left><Left>',
+    { noremap = true, desc = "Reemplazar palabra bajo el cursor (con confirmación)" })
+
+-- 2. Reemplazar la palabra bajo el cursor en todo el archivo (sin confirmación)
+-- Más rápido pero más peligroso
+vim.keymap.set('n', '<leader>RW', ':%s/\\<<C-r><C-w>\\>//g<Left><Left>',
+    { noremap = true, desc = "Reemplazar palabra bajo el cursor (sin confirmación)" })
+
+-- 3. Reemplazar palabra seleccionada en modo visual
+vim.keymap.set('v', '<leader>rw', '"hy:%s/<C-r>h//gc<left><left><left>',
+    { noremap = true, desc = "Reemplazar texto seleccionado (con confirmación)" })
+
+-- 4. Reemplazar en la línea actual solamente
+vim.keymap.set('n', '<leader>rl', ':s/\\<<C-r><C-w>\\>//gc<Left><Left><Left>',
+    { noremap = true, desc = "Reemplazar palabra en línea actual" })
+
+-- 5. Búsqueda y reemplazo interactivo (más potente)
+vim.keymap.set('n', '<leader>rs', ':s/',
+    { noremap = true, desc = "Búsqueda y reemplazo manual" })
+
+-- 6. Reemplazo global interactivo
+vim.keymap.set('n', '<leader>rg', ':%s/',
+    { noremap = true, desc = "Búsqueda y reemplazo global manual" })
+
+-- ============================================
+-- FUNCIONES AVANZADAS PARA REEMPLAZO
+-- ============================================
+
+-- Función para reemplazar con confirmación visual mejorada
+local function replace_word_confirm()
+    local word = vim.fn.expand('<cword>')
+    local input = vim.fn.input('Reemplazar "' .. word .. '" por: ')
+    if input ~= '' then
+        vim.cmd('%s/\\<' .. word .. '\\>/' .. input .. '/gc')
+    end
+end
+
+-- Función para reemplazar en archivos múltiples (requiere confirmación)
+local function replace_in_multiple_files()
+    local word = vim.fn.expand('<cword>')
+    local replacement = vim.fn.input('Reemplazar "' .. word .. '" por: ')
+    if replacement ~= '' then
+        local pattern = vim.fn.input('Archivos a modificar (ej: *.lua, *.py): ', '*.lua')
+        if pattern ~= '' then
+            vim.cmd('args ' .. pattern)
+            vim.cmd('argdo %s/\\<' .. word .. '\\>/' .. replacement .. '/gc | update')
+        end
+    end
+end
+
+-- Atajos para las funciones avanzadas
+vim.keymap.set('n', '<leader>rc', replace_word_confirm,
+    { noremap = true, desc = "Reemplazar palabra con diálogo" })
+
+vim.keymap.set('n', '<leader>rm', replace_in_multiple_files,
+    { noremap = true, desc = "Reemplazar en múltiples archivos" })
+
+-- ============================================
+-- ATAJOS ADICIONALES ÚTILES
+-- ============================================
+
+-- Resaltar todas las ocurrencias de la palabra bajo el cursor
+vim.keymap.set('n', '<leader>*', '*N',
+    { noremap = true, desc = "Resaltar palabra bajo el cursor" })
+
+-- Limpiar resaltado de búsqueda
+vim.keymap.set('n', '<leader>nh', ':nohlsearch<CR>',
+    { noremap = true, silent = true, desc = "Limpiar resaltado de búsqueda" })
+
+-- ============================================
+-- INFORMACIÓN DE USO
+-- ============================================
+
+--[[
+GUÍA DE USO:
+
+1. <leader>rw - Coloca el cursor sobre la palabra que quieres cambiar y presiona estas teclas.
+               Te aparecerá algo como: :%s/\<palabra\>//gc
+               Escribe la nueva palabra y presiona Enter.
+               Te preguntará en cada ocurrencia si quieres reemplazar (y/n/a/q)
+
+2. <leader>RW - Igual que el anterior pero reemplaza todas sin preguntar (¡cuidado!)
+
+3. En modo visual: Selecciona texto y presiona <leader>rw para reemplazarlo
+
+4. <leader>rl - Solo reemplaza en la línea actual
+
+5. <leader>rc - Versión con diálogo más amigable
+
+6. <leader>rm - Para reemplazar en múltiples archivos
+
+OPCIONES EN EL DIÁLOGO DE CONFIRMACIÓN:
+- y: Sí, reemplazar esta ocurrencia
+- n: No, saltar esta ocurrencia
+- a: Sí a todo (reemplazar todas las restantes)
+- q: Quit (salir sin hacer más cambios)
+- l: Last (reemplazar esta y salir)
+]]

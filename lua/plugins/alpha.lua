@@ -117,8 +117,7 @@ local logo = {
         --
         -- }
         dashboard.section.buttons.val = {
-            dashboard.button("󰇘", "  Oxycontroller", ":Neotree /home/yt/git/oxycontroller <CR>"),
-            dashboard.button("󰇘", "  Zephyr innovex", ":Neotree /home/yt/git/zephyr_innovex <CR>"),
+            dashboard.button("󰇘", "󱇷  RoboCup", ":Neotree /home/yt/git/RoboCupSoftware <CR>"),
             dashboard.button("󰇘", "  Git Proyects", ":Neotree /home/yt/git <CR>"),
             dashboard.button("󰇘", "  Neovim config", "<Cmd>Neotree reveal ~/.config/nvim/lua <CR>"),
         }

@@ -7,4 +7,3 @@ return {
         vim.g.strip_whitelines_at_eof = 1         -- Elimina líneas en blanco al final del archivo
     end
 }
-
