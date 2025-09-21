@@ -117,9 +117,10 @@ local logo = {
         --
         -- }
         dashboard.section.buttons.val = {
-            dashboard.button("󰇘", "󱇷  RoboCup", ":Neotree /home/yt/git/RoboCupSoftware <CR>"),
-            dashboard.button("󰇘", "  Git Proyects", ":Neotree /home/yt/git <CR>"),
-            dashboard.button("󰇘", "  Neovim config", "<Cmd>Neotree reveal ~/.config/nvim/lua <CR>"),
+            dashboard.button("󰇘", "󱇷  robot soccer", ":Neotree /home/yt/git/RoboCupSoftware <CR>"),
+            dashboard.button("󰇘", "󰈙  escrito robot soccer", ":Neotree /home/yt/git/docs_tesis <CR>"),
+            dashboard.button("󰇘", "  git Proyects", ":Neotree /home/yt/git <CR>"),
+            dashboard.button("󰇘", "  neovim config", "<Cmd>Neotree reveal ~/.config/nvim/lua <CR>"),
         }
 
         for _, button in ipairs(dashboard.section.buttons.val) do
