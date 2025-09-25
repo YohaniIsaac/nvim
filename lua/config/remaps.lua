@@ -1,48 +1,107 @@
+-- ============================================
+-- KEYMAPS AND CUSTOM REMAPS
+-- ============================================
+
+-- Set leader key to space
 vim.g.mapleader = " "
--- PLUGINS
--- Telescope
+
+-- ============================================
+-- TELESCOPE - FILE FINDER AND SEARCH
+-- ============================================
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
-vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-vim.keymap.set('n', '<leader>ps', builtin.live_grep, {})
 
---remaps for neo-tree
-vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>', {})
-vim.keymap.set('n', '<C-n>', ':Neotree toggle<CR>', {})
+-- Basic Telescope commands
+vim.keymap.set('n', '<leader>pf', builtin.find_files, {})   -- Find files in project
+vim.keymap.set('n', '<C-p>', builtin.git_files, {})         -- Find git-tracked files
+vim.keymap.set('n', '<leader>ps', builtin.live_grep, {})    -- Search text in files
 
-----------------------------------------------------------
--- Mover a la ventana izquierda (Ctrl + felchas)
-vim.keymap.set('n', '<C-Right>', '<C-w>h', { noremap = true, silent = true, desc = 'Mover a la ventana izquierda' })
-vim.keymap.set('n', '<C-Left>', '<C-w>l', { noremap = true, silent = true, desc = 'Mover a la ventana derecha' })
-vim.keymap.set('n', '<C-Up>', '<C-w>k', { noremap = true, silent = true, desc = 'Mover a la ventana de arriba' })
-vim.keymap.set('n', '<C-Down>', '<C-w>j', { noremap = true, silent = true, desc = 'Mover a la ventana de abajo' })
+-- Set telescope as default picker for LazyVim
+vim.g.lazyvim_picker = "telescope"
 
--- Navegación entre ventanas
-vim.keymap.set('n', '<C-Left>', '<C-w>h', {}) -- Mover a la ventana izquierda
-vim.keymap.set('n', '<C-Right>', '<C-w>l', {})-- Mover a la ventana derecha
-vim.keymap.set('n', '<C-Up>', '<C-w>k', {})   -- Mover a la ventana de arriba
-vim.keymap.set('n', '<C-Down>', '<C-w>j', {}) -- Mover a la ventana de abajo
+-- Enhanced Telescope commands (includes hidden files)
+vim.keymap.set("n", "<leader>ff", function()
+    builtin.find_files({
+        hidden = true,                                      -- Include hidden files
+        no_ignore = true,                                   -- Ignore .gitignore rules
+    })
+end, { noremap = true, silent = true, desc = "Find files (including hidden)" })
 
--- Función para cambiar de ventana repetidamente
-local function repeatable_move(direction)
-    return function()
-        vim.cmd('wincmd ' .. direction)                                            -- Ejecuta el comando de movimiento
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Ignore>', true, false, true)) -- Ignora la tecla presionada
-    end
-end
+vim.keymap.set("n", "<leader>fg", function()
+    builtin.live_grep({
+        hidden = true,                                      -- Search in hidden files
+        no_ignore = true,                                   -- Ignore .gitignore rules
+    })
+end, { noremap = true, silent = true, desc = "Live grep (including hidden)" })
 
--- Mapea Ctrl+W en modo terminal para permitir la navegación entre ventanas
+-- Search for word under cursor using Telescope
+vim.keymap.set("n", "<leader>gg", function()
+    builtin.grep_string({
+        word_match = "-w",                                  -- Match whole words only
+        hidden = true,                                      -- Search in hidden files
+        no_ignore = true,                                   -- Ignore .gitignore rules
+    })
+end, { noremap = true, silent = true, desc = "Search word under cursor" })
+
+-- ============================================
+-- NEO-TREE - FILE EXPLORER
+-- ============================================
+-- Note: These are duplicate mappings (both map to <C-n>)
+vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>', {}) -- Open file explorer (reveal current file)
+vim.keymap.set('n', '<C-n>', ':Neotree toggle<CR>', {})                 -- Toggle file explorer
+
+-- ============================================
+-- HARPOON - QUICK FILE NAVIGATION
+-- ============================================
+local harpoon = require("harpoon")
+
+-- Add current file to Harpoon list
+vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end)
+
+-- Toggle Harpoon quick menu
+vim.keymap.set('n', '<C-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+-- Quick jump to marked files (1-6)
+vim.keymap.set('n', '<leader>1', function() harpoon:list():select(1) end) -- Jump to file 1
+vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end) -- Jump to file 2
+vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end) -- Jump to file 3
+vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end) -- Jump to file 4
+vim.keymap.set('n', '<leader>5', function() harpoon:list():select(5) end) -- Jump to file 5
+vim.keymap.set('n', '<leader>6', function() harpoon:list():select(6) end) -- Jump to file 6
+
+-- Alternative navigation
+-- vim.keymap.set('n', '<Tab>', function() harpoon:list():prev() end)
+-- vim.keymap.set('n', '<S-Tab>', function() harpoon:list():next() end)
+
+-- ============================================
+-- WINDOW NAVIGATION - MOVE BETWEEN SPLITS
+-- ============================================
+-- Navigate between windows using Ctrl + Arrow keys
+-- Note: The descriptions don't match the actual directions due to the key mappings
+vim.keymap.set('n', '<C-Right>', '<C-w>l', { noremap = true, silent = true, desc = 'Move to right window' })
+vim.keymap.set('n', '<C-Left>', '<C-w>h', { noremap = true, silent = true, desc = 'Move to left window' })
+vim.keymap.set('n', '<C-Up>', '<C-w>k', { noremap = true, silent = true, desc = 'Move to window above' })
+vim.keymap.set('n', '<C-Down>', '<C-w>j', { noremap = true, silent = true, desc = 'Move to window below' })
+
+-- ============================================
+-- TERMINAL INTEGRATION
+-- ============================================
+-- Allow Ctrl+W in terminal mode to switch between windows
 vim.api.nvim_set_keymap('t', '<C-w>', [[<C-\><C-n><C-w>]], { noremap = true, silent = true })
--- vim.cmd("set smartcase")
 
---Cerrar ventana actual
+-- ============================================
+-- WINDOW AND BUFFER MANAGEMENT
+-- ============================================
+-- Close current window
 vim.cmd("command! CloseWindow close")
 vim.keymap.set('n', '<Leader>q', ':CloseWindow<CR>', { noremap = true, silent = true })
 
--- Abrir terminal
+-- Open terminal in current window
 vim.keymap.set('n', '<Leader>t', ':terminal<CR>', { noremap = true, silent = true })
 
--- Función para limpiar la búsqueda de palabras cada vez que se realiza una
+-- ============================================
+-- SEARCH BEHAVIOR CUSTOMIZATION
+-- ============================================
+-- Clear search register after leaving command line (removes search highlighting)
 vim.api.nvim_create_autocmd("CmdlineLeave", {
     pattern = "/,?",
     callback = function()
@@ -50,175 +109,173 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
     end,
 })
 
--- Configuración para copiar y pegar con Ctrl+c y Ctrl+v
-vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true }) -- Copiar con Ctrl+c
-vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true }) -- Pegar con Ctrl+v en modo normal
-vim.api.nvim_set_keymap('v', '<C-v>', '"+p', { noremap = true, silent = true }) -- Pegar con Ctrl+v en modo visual
+-- ============================================
+-- CLIPBOARD OPERATIONS
+-- ============================================
+-- Copy and paste using system clipboard with Ctrl+C and Ctrl+V
+vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true }) -- Copy selection to system clipboard
+vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true }) -- Paste from system clipboard (normal mode)
+vim.api.nvim_set_keymap('v', '<C-v>', '"+p', { noremap = true, silent = true }) -- Paste from system clipboard (visual mode)
 
--- shift + tab para ir al buffer anterior
-vim.keymap.set("n", "<S-Tab>", vim.cmd.bprevious)                               -- Moverse entre buffers
--- Cerrar el buffer actual
-vim.keymap.set("n", "<Leader>bd", ":bdelete<CR>", { noremap = true, silent = true, desc = "Cerrar buffer actual" })
--- Cerrar el buffer actual y abrir el siguiente
-vim.keymap.set("n", "<Leader>bn", ":bdelete<CR>:bnext<CR>", { noremap = true, silent = true, desc = "Cerrar buffer y abrir el siguiente" })
+-- ============================================
+-- BUFFER NAVIGATION
+-- ============================================
+-- Navigate between open buffers
+vim.keymap.set("n", "<S-Tab>", vim.cmd.bprevious)                               -- Go to previous buffer
 
--- Mapea Ctrl+W en modo terminal para permitir la navegación entre ventanas
+-- Buffer management
+vim.keymap.set("n", "<Leader>bd", ":bdelete<CR>", { noremap = true, silent = true, desc = "Close current buffer" })
+vim.keymap.set("n", "<Leader>bn", ":bdelete<CR>:bnext<CR>", { noremap = true, silent = true, desc = "Close current buffer and open next" })
+
+-- ============================================
+-- TERMINAL MODE NAVIGATION (DUPLICATE)
+-- ============================================
+-- Duplicate mapping: Allow Ctrl+W in terminal mode (already defined above)
 vim.api.nvim_set_keymap('t', '<C-w>', [[<C-\><C-n><C-w>]], { noremap = true, silent = true })
 
--- then you need to set the option below.
-vim.g.lazyvim_picker = "telescope"
+-- ============================================
+-- WINDOW RESIZING
+-- ============================================
+-- Resize windows using Ctrl+Shift+Arrow keys
+vim.keymap.set("n", "<C-S-Down>", "<Cmd>resize -1<CR>", { noremap = true, silent = true, desc = "Decrease window height" })
+vim.keymap.set("n", "<C-S-Up>", "<Cmd>resize +1<CR>", { noremap = true, silent = true, desc = "Increase window height" })
+vim.keymap.set("n", "<C-S-Right>", "<Cmd>vertical resize +1<CR>", { noremap = true, silent = true, desc = "Increase window width" })
+vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -1<CR>", { noremap = true, silent = true, desc = "Decrease window width" })
 
--- Keymaps para buscar archivos y hacer live grep con Telescope
-local builtin = require("telescope.builtin")
+-- ============================================
+-- FILE OPERATIONS
+-- ============================================
+-- Word replacement
+-- vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, silent = true })
 
--- Busca archivos incluyendo ocultos
-vim.keymap.set("n", "<leader>ff", function()
-    builtin.find_files({
-        hidden = true,
-        no_ignore = true,
-    })
-end, { noremap = true, silent = true, desc = "Find files" })
-
--- Realiza búsqueda de texto en archivos
-vim.keymap.set("n", "<leader>fg", function()
-    builtin.live_grep({
-        hidden = true,
-        no_ignore = true,
-    })
-end, { noremap = true, silent = true, desc = "Live grep" })
-
--- Buscar la palabra bajo el cursor en Telescope
-vim.keymap.set("n", "<leader>gg", function()
-    builtin.grep_string({
-        word_match = "-w",
-        hidden = true,
-        no_ignore = true,
-    })
-end, { noremap = true, silent = true, desc = "Buscar palabra bajo el cursor" })
-
---remaps for harpoon
-local harpoon = require("harpoon")
-
--- Añade el archivo actual a la lista Harpooon
-vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end)
--- Muestra u oculta el menú de Harpooon ctrl + E
-vim.keymap.set('n', '<C-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
--- Saltar rápidamente a los archivos marcados de 1 al 6
-vim.keymap.set('n', '<leader>1', function() harpoon:list():select(1) end)
-vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end)
-vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end)
-vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end)
-vim.keymap.set('n', '<leader>5', function() harpoon:list():select(5) end)
-vim.keymap.set('n', '<leader>6', function() harpoon:list():select(6) end)
--- vim.keymap.set('n', '<Tab>', function() harpoon:list():prev() end)
--- vim.keymap.set('n', '<S-Tab>', function() harpoon:list():next() end)
-
--- Redimensionar ventanas con Control + Shift + flechas
-vim.keymap.set("n", "<C-S-Down>", "<Cmd>resize -2<CR>", { noremap = true, silent = true, desc = "Disminuir altura de la ventana" })  -- Disminuir alto
-vim.keymap.set("n", "<C-S-Up>", "<Cmd>resize +2<CR>", { noremap = true, silent = true, desc = "Aumentar altura de la ventana" })   -- Aumentar alto
-vim.keymap.set("n", "<C-S-Right>", "<Cmd>vertical resize +2<CR>", { noremap = true, silent = true, desc = "Aumentar ancho de la ventana" })  -- Aumentar ancho
-vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -2<CR>", { noremap = true, silent = true, desc = "Disminuir ancho de la ventana" })  -- Disminuir ancho
-
--- remap to replace words
---vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, silent = true })
--- Guarda el archivo actual
+-- Smart save with whitespace cleaning option
 vim.keymap.set('n', '<C-s>', function()
-    -- Detectar si hay espacios en blanco al final de líneas
+    -- Check if file has trailing whitespace
     local has_whitespace = vim.fn.search('\\s\\+$', 'nw') > 0
 
     if has_whitespace then
         local choice = vim.fn.input("Clean whitespace? (y/n): ")
         if choice:lower() == 'y' then
-            vim.cmd('StripWhitespace')
+            vim.cmd('StripWhitespace')              -- Requires vim-better-whitespace plugin
         end
     end
 
-    vim.cmd('write')
+    vim.cmd('write')                                -- Save file
 end, { noremap = true, silent = true })
 
--- Copiar el contenido de todo el archivo
+-- Copy entire file content to clipboard
+-- Note: 'opts' variable is not defined, this might cause an error
 vim.keymap.set('n', '<leader>ya', 'ggVGy<C-o>', opts)
 
--- Mover documento manteniendo el cursor en su posición (modo insertar)
-vim.keymap.set('i', '<C-j>', '<C-o><C-e>', { noremap = true, silent = true }) -- Desplaza documento hacia abajo
-vim.keymap.set('i', '<C-k>', '<C-o><C-y>', { noremap = true, silent = true }) -- Desplaza documento hacia arriba
+-- ============================================
+-- DOCUMENT SCROLLING (INSERT MODE)
+-- ============================================
+-- Scroll document while keeping cursor position in insert mode
+vim.keymap.set('i', '<C-j>', '<C-o><C-e>', { noremap = true, silent = true }) -- Scroll document down
+vim.keymap.set('i', '<C-k>', '<C-o><C-y>', { noremap = true, silent = true }) -- Scroll document up
 
--- Mover ventanas (intercambiar posiciones) con Alt + flechas
--- Intercambiar posiciones con la ventana adyacente (Alt + flechas)
--- Intercambiar posiciones con la ventana adyacente (Alt + flechas)
+-- ============================================
+-- WINDOW SWAPPING - MOVE WINDOW POSITIONS
+-- ============================================
+-- Swap current window with adjacent windows using Alt + Arrow keys
+
+-- Swap with left window
 vim.keymap.set('n', '<A-Left>', function()
-    local winid = vim.api.nvim_get_current_win()  -- Obtiene el ID de la ventana actual
-    vim.cmd('wincmd h')
+    local winid = vim.api.nvim_get_current_win()    -- Get current window ID
+    vim.cmd('wincmd h')                             -- Move to left window
     if vim.api.nvim_get_current_win() ~= winid then
-        vim.cmd('wincmd x')  -- Intercambia las ventanas
+        vim.cmd('wincmd x')                         -- Swap windows if movement was successful
     else
-        -- No hay ventana a la izquierda, volvemos a la ventana original
+        -- No window to the left, return to original window
         vim.api.nvim_set_current_win(winid)
     end
-end, { noremap = true, silent = true, desc = 'Intercambiar con ventana a la izquierda' })
+end, { noremap = true, silent = true, desc = 'Swap with left window' })
 
+-- Swap with right window
 vim.keymap.set('n', '<A-Right>', function()
-    local winid = vim.api.nvim_get_current_win()  -- Obtiene el ID de la ventana actual
-    vim.cmd('wincmd l')
+    local winid = vim.api.nvim_get_current_win()    -- Get current window ID
+    vim.cmd('wincmd l')                             -- Move to right window
     if vim.api.nvim_get_current_win() ~= winid then
-        vim.cmd('wincmd x')  -- Intercambia las ventanas
+        vim.cmd('wincmd x')                         -- Swap windows if movement was successful
     else
-        -- No hay ventana a la derecha, volvemos a la ventana original
+        -- No window to the right, return to original window
         vim.api.nvim_set_current_win(winid)
     end
-end, { noremap = true, silent = true, desc = 'Intercambiar con ventana a la derecha' })
+end, { noremap = true, silent = true, desc = 'Swap with right window' })
 
+-- Swap with upper window
 vim.keymap.set('n', '<A-Up>', function()
-    local winid = vim.api.nvim_get_current_win()  -- Obtiene el ID de la ventana actual
-    vim.cmd('wincmd k')
+    local winid = vim.api.nvim_get_current_win()    -- Get current window ID
+    vim.cmd('wincmd k')                             -- Move to upper window
     if vim.api.nvim_get_current_win() ~= winid then
-        vim.cmd('wincmd x')  -- Intercambia las ventanas
+        vim.cmd('wincmd x')                         -- Swap windows if movement was successful
     else
-        -- No hay ventana arriba, volvemos a la ventana original
+        -- No window above, return to original window
         vim.api.nvim_set_current_win(winid)
     end
-end, { noremap = true, silent = true, desc = 'Intercambiar con ventana arriba' })
+end, { noremap = true, silent = true, desc = 'Swap with upper window' })
 
+-- Swap with lower window
 vim.keymap.set('n', '<A-Down>', function()
-    local winid = vim.api.nvim_get_current_win()  -- Obtiene el ID de la ventana actual
-    vim.cmd('wincmd j')
+    local winid = vim.api.nvim_get_current_win()    -- Get current window ID
+    vim.cmd('wincmd j')                             -- Move to lower window
     if vim.api.nvim_get_current_win() ~= winid then
-        vim.cmd('wincmd x')  -- Intercambia las ventanas
+        vim.cmd('wincmd x')                         -- Swap windows if movement was successful
     else
-        -- No hay ventana abajo, volvemos a la ventana original
+        -- No window below, return to original window
         vim.api.nvim_set_current_win(winid)
     end
-end, { noremap = true, silent = true, desc = 'Intercambiar con ventana abajo' })
+end, { noremap = true, silent = true, desc = 'Swap with lower window' })
 
 
+-- ============================================
+-- PYTHON-SPECIFIC KEYMAPS
+-- ============================================
+-- These keymaps are only available in Python (.py) files
+-- They are automatically set when a Python file is opened
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "python",
+    callback = function()
+        local python_setup = require("config.python-setup")
+        local opts = { buffer = true, noremap = true, silent = true }
 
+        -- Toggle current multiline docstring
+        vim.keymap.set('n', '<leader>dt', python_setup.toggle_current_docstring,
+            vim.tbl_extend('force', opts, { desc = 'Toggle docstring multilinea actual' }))
 
--- -- Mapeo para salir del modo terminal con doble Escape
--- local term_esc_count = 0
--- local term_esc_timer = nil
---
--- vim.api.nvim_set_keymap('t', '<Esc>', function()
---   local now = vim.loop.now()
---
---   -- Si es la primera pulsación de Escape
---   if term_esc_count == 0 then
---     term_esc_count = 1
---     term_esc_timer = vim.defer_fn(function()
---       term_esc_count = 0
---     end, 300) -- 300ms para detectar la segunda pulsación
---     return '<Esc>'
---
---   -- Si es la segunda pulsación dentro del tiempo
---   elseif term_esc_count == 1 then
---     term_esc_count = 0
---     if term_esc_timer then
---       vim.fn.timer_stop(term_esc_timer)
---       term_esc_timer = nil
---     end
---     return '<C-\\><C-n>' -- Esto cambia al modo normal
---   end
--- end, { expr = true, noremap = true })
+        -- Fold all multiline docstrings
+        vim.keymap.set('n', '<leader>df', python_setup.fold_all_docstrings,
+            vim.tbl_extend('force', opts, { desc = 'Plegar todos los docstrings multilinea' }))
 
--- Alternativa: Mapeo con Control+Escape para salir del modo terminal
-vim.api.nvim_set_keymap('t', '<C-Esc>', [[<C-\><C-n>]], { noremap = true, silent = true })
+        -- Display all docstrings
+        vim.keymap.set('n', '<leader>du', python_setup.unfold_all_docstrings,
+            vim.tbl_extend('force', opts, { desc = 'Desplegar todos los docstrings' }))
+
+        -- Toggle between folding/unfolding all
+        vim.keymap.set('n', '<leader>da', function()
+            local has_folds_closed = false
+
+            -- Check for closed folds
+            for i = 1, vim.fn.line('$') do
+                if vim.fn.foldclosed(i) ~= -1 then
+                    has_folds_closed = true
+                    break
+                end
+            end
+
+            if has_folds_closed then
+                python_setup.unfold_all_docstrings()
+            else
+                python_setup.fold_all_docstrings()
+            end
+        end, vim.tbl_extend('force', opts, { desc = 'Alternar todos los docstrings multilinea' }))
+
+        -- Navigating between docstrings
+        vim.keymap.set('n', '<leader>dn', python_setup.go_to_next_docstring,
+            vim.tbl_extend('force', opts, { desc = 'Ir al siguiente docstring multilinea' }))
+
+        vim.keymap.set('n', '<leader>dp', python_setup.go_to_prev_docstring,
+            vim.tbl_extend('force', opts, { desc = 'Ir al docstring multilinea anterior' }))
+    end,
+})

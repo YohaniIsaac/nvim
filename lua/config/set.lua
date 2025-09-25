@@ -1,40 +1,58 @@
---line numbers
-vim.opt.nu = true
-vim.opt.relativenumber = true
+-- ============================================
+-- Line numbers
+-- ============================================
+vim.opt.nu = true                   -- Absolute line numbers
+vim.opt.relativenumber = false      -- Relative line numbers
 
---indentation format
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
+-- ============================================
+-- Indentation and format
+-- ============================================
+vim.opt.tabstop = 4                 -- Tab = 4 spaces
+vim.opt.softtabstop = 4             -- Backspace removes 4 spaces
+vim.opt.shiftwidth = 4              -- Automatic indentation = 4 spaces
+vim.opt.expandtab = true            -- Convert tabs to spaces
+vim.opt.smartindent = true          -- Maintains previous line indentation
+vim.opt.wrap = false                -- No line wrapping
 
-vim.opt.smartindent = true
-
-vim.opt.wrap = false
-
---backups configs
-vim.opt.swapfile = false
-vim.opt.backup = false
+-- ============================================
+-- Backups configs
+-- ============================================
+vim.opt.swapfile = false            -- No swap files
+vim.opt.backup = false              -- No automatic backups
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 
---search configs
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
+-- ============================================
+-- Search configs
+-- ============================================
+vim.opt.hlsearch = false            -- No persistent highlighting
+vim.opt.incsearch = true            -- Incremental search
 
-vim.opt.termguicolors = true
 
---scroll option
-vim.opt.scrolloff = 8
+-- ============================================
+-- Visual and colors
+-- ============================================
+vim.opt.termguicolors = true        -- 24-bit colors
+vim.opt.colorcolumn = "100"         -- Line of sight in column 100
 
---yank == copy pc
--- INFO: requires xclip to function
+-- ============================================
+-- Scroll option
+-- ============================================
+vim.opt.scrolloff = 8               -- 8 lines of margin when scrolling
+vim.opt.smoothscroll = true         -- Soft scroll (Neovim 0.9+)
+
+-- ============================================
+-- CLIPBOARD
+-- ============================================
+-- requires xclip to function
 vim.schedule(function()
 	vim.opt.clipboard = "unnamedplus"
 end)
 
+-- ============================================
 -- Center screen when jumping between search results
-vim.keymap.set('n', 'n', 'nzz', { noremap = true })
-vim.keymap.set('n', 'N', 'Nzz', { noremap = true })
+-- ============================================
+vim.keymap.set('n', 'n', 'nzz', { noremap = true })     -- Next result
+vim.keymap.set('n', 'N', 'Nzz', { noremap = true })     -- Previous result
 
 -- Center screen after initiating search with '/' or '?'
 vim.api.nvim_create_autocmd('CmdlineLeave', {
@@ -46,8 +64,7 @@ vim.api.nvim_create_autocmd('CmdlineLeave', {
     end,
 })
 
--- Línea visual a los 100 caracteres
-vim.opt.colorcolumn = "100"
-
--- Personalizar el color para que combine con tu tema
+-- ============================================
+-- Customize the color to match your theme
+-- ============================================
 vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#2a2a2a" })
