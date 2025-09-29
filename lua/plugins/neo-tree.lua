@@ -98,12 +98,12 @@ return {
                     -- Usar un timer para mostrar el mensaje después de que Neo-tree se haya cargado completamente
                     vim.defer_fn(function()
                         if vim.fn.has('nvim-0.8') == 1 then
-                            vim.notify("💡 Presiona 'H' en Neo-tree para alternar archivos ocultos", vim.log.levels.INFO, {
+                            vim.notify("Presiona 'H' en Neo-tree para alternar archivos ocultos", vim.log.levels.INFO, {
                                 title = "Neo-tree",
                                 timeout = 3000,
                             })
                         else
-                            print("💡 Presiona 'H' en Neo-tree para alternar archivos ocultos")
+                            print("Presiona 'H' en Neo-tree para alternar archivos ocultos")
                         end
                     end, 1000)
                 end,
