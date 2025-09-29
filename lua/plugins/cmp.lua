@@ -18,9 +18,6 @@ return {
       "L3MON4D3/LuaSnip",
       "saadparwaiz1/cmp_luasnip",
       "rafamadriz/friendly-snippets",
-      -- Copilot
-      "zbirenbaum/copilot.lua",
-      "zbirenbaum/copilot-cmp",
     },
     config = function()
       local cmp = require("cmp")
@@ -117,33 +114,12 @@ return {
 
         -- Fuentes de autocompletado
         sources = {
-          { name = 'copilot' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'buffer' },
         },
       })
-    end,
-  },
-
-  -- Configuración específica de Copilot
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-    end,
-  },
-
-  {
-    "zbirenbaum/copilot-cmp",
-    config = function()
-      require("copilot_cmp").setup()
     end,
   },
 }
