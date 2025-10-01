@@ -1,25 +1,36 @@
+-- ============================================
+-- CONFORM.NVIM - CODE FORMATTING
+-- ============================================
 return {
     -- Agregar conform.nvim para manejar el formateo
     {
         "stevearc/conform.nvim",
         opts = {
-            -- Configuración de formateadores por tipo de archivo
+            -- ============================================
+            -- FORMATTERS BY FILETYPE
+            -- ============================================
             formatters_by_ft = {
                 c = { "clang_format" },
                 cpp = { "clang_format" },
                 h = { "clang_format" },
             },
-            -- Configuración específica para clang-format
+
+            -- ============================================
+            -- CLANG-FORMAT CONFIGURATION
+            -- ============================================
             formatters = {
                 clang_format = {
-                    -- Usar el archivo .clang-format del proyecto
+                    -- Use the project's .clang-format file
                     prepend_args = { "--style=file" },
                 },
             },
         },
-        -- Inicialización del plugin
+
+        -- ============================================
+        -- INITIALIZATION
+        -- ============================================
         init = function()
-            -- Registrar el comando :Format para uso desde la línea de comandos
+            -- Register the :Format command for use from the command line
             vim.api.nvim_create_user_command("Format", function(args)
                 local range = nil
                 if args.count ~= -1 then
@@ -31,18 +42,12 @@ return {
                 end
                 require("conform").format({ async = true, lsp_fallback = true, range = range })
             end, { range = true })
-
-            -- Configurar el atajo de teclado <leader>cf para formateo
-            vim.keymap.set({ "n", "v" }, "<leader>kk", function()
-                require("conform").format({
-                    lsp_fallback = true,
-                    async = true,
-                })
-            end, { desc = "Format file or range (in visual mode)" })
         end,
     },
 
-    -- Desactivar el formateo de none-ls si está presente
+    -- ============================================
+    -- DISABLE NONE-LS FORMATTING (if present)
+    -- ============================================
     {
         "nvimtools/none-ls.nvim",
         optional = true,

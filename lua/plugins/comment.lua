@@ -1,26 +1,56 @@
-------------------------------
---- COMENTAR Y DESCOMENTAR ---
-------------------------------
+-- ============================================
+-- COMMENT.NVIM - TOGGLE COMMENTS
+-- ============================================
 return {
-  {
-    "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup({
-        toggler = {
-          line = "gc", -- Toggle para una línea
-        },
-        opleader = {
-          line = "gc", -- Toggle para el modo visual
-        },
-        mappings = {
-          basic = true, -- Activa las combinaciones básicas (gc)
-          extra = true, -- Activa combinaciones extra (gcA, etc.)
-        },
-        pre_hook = function(ctx)
-          -- Esto es opcional: añade compatibilidad con integraciones como `ts_context_commentstring`
+    {
+        "numToStr/Comment.nvim",
+        event = "VeryLazy",
+        config = function()
+            local ft = require('Comment.ft')
+
+            -- ============================================
+            -- COMMENT SETTINGS BY FILE TYPE
+            -- ============================================
+            -- Correct format according to documentation:
+            -- ft.set('filetype', {'line_comment', 'block_comment'})
+            -- First parameter: line comment (for gc)
+            -- Second parameter: block comment (for gb)
+
+            -- Configure C and C++ to use /* */ in both cases
+            ft.set('c', {'/*%s*/', '/*%s*/'})
+            ft.set('cpp', {'/*%s*/', '/*%s*/'})
+
+            require("Comment").setup({
+                -- ============================================
+                -- TOGGLE MODES
+                -- ============================================
+                toggler = {
+                    line = "gc",   -- Toggle line comment
+                    block = "gb",  -- Toggle block comment
+                },
+                opleader = {
+                    line = "gc",   -- Toggle in visual mode (line)
+                    block = "gb",  -- Toggle in visual mode (block)
+                },
+
+                -- ============================================
+                -- MAPPINGS
+                -- ============================================
+                mappings = {
+                    basic = true,  -- Enable basic mappings (gc, gb)
+                    extra = true,  -- Enable extra mappings (gcA, gbc, etc.)
+                },
+
+                -- ============================================
+                -- PADDING
+                -- ============================================
+                padding = true,  -- Agrega espacio entre comentario y código
+
+                -- ============================================
+                -- HOOKS
+                -- ============================================
+                pre_hook = nil,
+            })
         end,
-      })
-    end,
-    event = "VeryLazy", -- Opcional: Carga el plugin bajo demanda
-  },
+    },
 }

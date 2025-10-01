@@ -1,5 +1,6 @@
--- Configuración del plugin SmoothCursor.nvim para lazy.nvim
-
+-- ============================================
+-- SMOOTH-CURSOR - ANIMATED CURSOR WITH TRAIL
+-- ============================================
 --[[
 TIPOS DE ANIMACIÓN DISPONIBLES:
 -----------------------------
@@ -13,7 +14,7 @@ Para cambiar el tipo de animación, modifica el valor de 'type' en la configurac
 6. "magic"   - Combina diferentes tipos de animación
 7. "linear"  - Movimiento constante sin aceleración
 
-sl efecto Matrix se activa automáticamente al mover el cursor hacia abajo
+El efecto Matrix se activa automáticamente al mover el cursor hacia abajo
 --]]
 
 -- Caracteres para el efecto Matrix
@@ -39,91 +40,127 @@ sl efecto Matrix se activa automáticamente al mover el cursor hacia abajo
 --     'π', 'ρ', 'σ', 'τ', 'υ',
 --     'φ', 'ψ', 'ω'
 -- }
--- Caracteres para el efecto Matrix
 
-local up_chars = {''}  -- Flechas hacia arriba
-local down_chars = {' '}  -- Flechas hacia abajo
+-- ============================================
+-- ANIMATION CHARACTERS
+-- ============================================
+local up_chars = {''}      -- Up arrows
+local down_chars = {' '}   -- Down arrows
 
--- Caracteres especiales para el cursor principal
+-- Special characters for the main cursor
 local head_chars = {''}
 local head_chars2 = {'◈', '◆', '❖', '⚝', '✴'}
 
+-- ============================================
+-- STATE TRACKING
+-- ============================================
 local last_y = vim.fn.line('.')
-local current_chars = down_chars  -- Inicialmente, se asume que baja
+local current_chars = down_chars  -- Initially, it is assumed that it goes down
 
 return {
-  {
-    "gen740/SmoothCursor.nvim",
-    config = function()
-      local function generate_body(length)
-        local body = {}
-        local chars_length = #current_chars
-        for i = 1, length do
-          local char_index = math.random(1, chars_length)
-          local red_intensity = math.floor(102 * (1 - i/length))
-          local green_intensity = math.floor(204 * (1 - i/length))
-          local blue_intensity = math.floor(255 * (1 - i/length))
-          local hl_group = string.format("SmoothCursor_%d", i)
+    {
+        "gen740/SmoothCursor.nvim",
+        config = function()
+            -- ============================================
+            -- BODY GENERATION FUNCTION
+            -- ============================================
+            local function generate_body(length)
+                local body = {}
+                local chars_length = #current_chars
 
-          vim.api.nvim_command(string.format(
-            'highlight %s guifg=#%02x%02x%02x gui=bold',
-            hl_group,
-            red_intensity,
-            green_intensity,
-            blue_intensity
-          ))
-          table.insert(body, {
-            cursor = current_chars[char_index],
-            texthl = hl_group
-          })
-        end
-        return body
-      end
+                for i = 1, length do
+                    local char_index = math.random(1, chars_length)
 
-      local function update_cursor_direction()
-        local current_y = vim.fn.line('.')
-        if current_y < last_y then
-          current_chars = up_chars
-        elseif current_y > last_y then
-          current_chars = down_chars
-        end
-        last_y = current_y
-      end
+                    -- Calculate color gradient (blue to darker)
+                    local red_intensity = math.floor(102 * (1 - i/length))
+                    local green_intensity = math.floor(204 * (1 - i/length))
+                    local blue_intensity = math.floor(255 * (1 - i/length))
+                    local hl_group = string.format("SmoothCursor_%d", i)
 
-      require("smoothcursor").setup({
-        type = "default",
-        autostart = true,
-        timeout = 3000,
-        threshold = 3,
-        modes = {
-          ["n"] = "block",
-          ["i"] = "line",
-          ["v"] = "underline",
-        },
-        fancy = {
-          enable = true,
-          head = {
-            cursor = head_chars[math.random(1, #head_chars)],
-            texthl = "SmoothCursorHead",
-          },
-          body = generate_body(30),
-        },
-        speed = 15,
-        disabled_filetypes = {
-          "TelescopePrompt",
-          "NvimTree",
-          "neo-tree",
-        },
-      })
+                    vim.api.nvim_command(string.format(
+                        'highlight %s guifg=#%02x%02x%02x gui=bold',
+                        hl_group,
+                        red_intensity,
+                        green_intensity,
+                        blue_intensity
+                    ))
 
-      vim.api.nvim_command('highlight SmoothCursorHead guifg=#66ccff gui=bold')
+                    table.insert(body, {
+                        cursor = current_chars[char_index],
+                        texthl = hl_group
+                    })
+                end
+                return body
+            end
 
-      vim.api.nvim_create_autocmd("CursorMoved", {
-        callback = function()
-          update_cursor_direction()
-          require("smoothcursor").setup({ fancy = { body = generate_body(30) } })
-        end
-      })
-    end,
-  },
+            -- ============================================
+            -- CURSOR DIRECTION UPDATE
+            -- ============================================
+            local function update_cursor_direction()
+                local current_y = vim.fn.line('.')
+                if current_y < last_y then
+                    current_chars = up_chars
+                elseif current_y > last_y then
+                    current_chars = down_chars
+                end
+                last_y = current_y
+            end
+
+            -- ============================================
+            -- SMOOTH CURSOR SETUP
+            -- ============================================
+            require("smoothcursor").setup({
+                type = "default",
+                autostart = true,
+                timeout = 3000,
+                threshold = 3,
+
+                -- ============================================
+                -- MODES
+                -- ============================================
+                modes = {
+                    ["n"] = "block",
+                    ["i"] = "line",
+                    ["v"] = "underline",
+                },
+
+                -- ============================================
+                -- FANCY TRAIL
+                -- ============================================
+                fancy = {
+                    enable = true,
+                    head = {
+                        cursor = head_chars[math.random(1, #head_chars)],
+                        texthl = "SmoothCursorHead",
+                    },
+                    body = generate_body(30),
+                },
+
+                -- ============================================
+                -- BEHAVIOR
+                -- ============================================
+                speed = 15,
+                disabled_filetypes = {
+                    "TelescopePrompt",
+                    "NvimTree",
+                    "neo-tree",
+                },
+            })
+
+            -- ============================================
+            -- HEAD COLOR
+            -- ============================================
+            vim.api.nvim_command('highlight SmoothCursorHead guifg=#66ccff gui=bold')
+
+            -- ============================================
+            -- AUTO-UPDATE ON CURSOR MOVE
+            -- ============================================
+            vim.api.nvim_create_autocmd("CursorMoved", {
+                callback = function()
+                    update_cursor_direction()
+                    require("smoothcursor").setup({ fancy = { body = generate_body(30) } })
+                end
+            })
+        end,
+    },
 }

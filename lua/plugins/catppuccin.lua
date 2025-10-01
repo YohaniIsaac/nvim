@@ -1,73 +1,80 @@
+-- ============================================
+-- CATPPUCCIN - THEME
+-- ============================================
 return {
     {
         "catppuccin/nvim",
         name = "catppuccin",
         priority = 1000,
         config = function()
-        require("catppuccin").setup({
-            flavour = "mocha", -- Esta es la variante más oscura
-            transparent_background = true, -- Habilita la transparencia
-            term_colors = true,
-            dim_inactive = {
-                enabled = true,
-                percentage = 0.25, -- Reduce el brillo de las ventanas inactivas
-            },
-            integrations = {
-                cmp = true,
-                gitsigns = true,
-                nvimtree = true,
-                telescope = true,
-                treesitter = true,
-                alpha = true, -- Soporte para alpha-nvim (tu dashboard)
-                native_lsp = {
+            -- ============================================
+            -- THEME SETUP
+            -- ============================================
+            require("catppuccin").setup({
+                flavor = "mocha",               -- This is the darkest variant
+                transparent_background = true,  -- Enable transparency
+                term_colors = true,
+
+                -- ============================================
+                -- DIM INACTIVE WINDOWS
+                -- ============================================
+                dim_inactive = {
                     enabled = true,
-                    virtual_text = {
-                        errors = { "italic" },
-                        hints = { "italic" },
-                        warnings = { "italic" },
-                        information = { "italic" },
+                    percentage = 0.25,          -- Reduces glare from inactive windows
+                },
+
+                -- ============================================
+                -- PLUGIN INTEGRATIONS
+                -- ============================================
+                integrations = {
+                    cmp = true,
+                    gitsigns = true,
+                    nvimtree = true,
+                    telescope = true,
+                    treesitter = true,
+                    alpha = true, -- Soporte para alpha-nvim (tu dashboard)
+                    native_lsp = {
+                        enabled = true,
+                        virtual_text = {
+                            errors = { "italic" },
+                            hints = { "italic" },
+                            warnings = { "italic" },
+                            information = { "italic" },
+                        },
                     },
                 },
-            },
-        })
-        -- Establecer el tema
-        vim.cmd.colorscheme "catppuccin"
-        -- Ajustes adicionales para mejorar la transparencia
-        vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+            })
+            -- ============================================
+            -- APPLY COLORSCHEME
+            -- ============================================
+            vim.cmd.colorscheme("catppuccin")
 
-        local docstring_color = "#6c7086"  -- Color gris tenue para docstrings
+            -- ============================================
+            -- TRANSPARENCY OVERRIDES
+            -- ============================================
+            vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+            vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 
-        vim.api.nvim_set_hl(0, "@string.documentation.python", {
-          fg = docstring_color,
-          italic = true,
-          bg = "NONE"
-        })
+            -- ============================================
+            -- PYTHON DOCSTRING COLORS
+            -- ============================================
+            local docstring_color = "#6c7086" -- Light gray color for docstrings
 
-        vim.api.nvim_set_hl(0, "@string.documentation", {
-          fg = docstring_color,
-          italic = true,
-          bg = "NONE"
-        })
+            local docstring_highlights = {
+                "@string.documentation.python",
+                "@string.documentation",
+                "@comment.documentation.python",
+                "pythonDocstring",
+                "@string.special.python",
+            }
 
-        vim.api.nvim_set_hl(0, "@comment.documentation.python", {
-          fg = docstring_color,
-          italic = true,
-          bg = "NONE"
-        })
-
-        vim.api.nvim_set_hl(0, "pythonDocstring", {
-          fg = docstring_color,
-          italic = true,
-          bg = "NONE"
-        })
-
-        vim.api.nvim_set_hl(0, "@string.special.python", {
-          fg = docstring_color,
-          italic = true,
-          bg = "NONE"
-        })
-
+            for _, group in ipairs(docstring_highlights) do
+                vim.api.nvim_set_hl(0, group, {
+                    fg = docstring_color,
+                    italic = true,
+                    bg = "NONE"
+                })
+            end
         end,
     },
 }

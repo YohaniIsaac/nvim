@@ -1,176 +1,86 @@
--- Translation plugin for Neovim
+-- ============================================
+-- TRANSLATE.NVIM - TRANSLATION PLUGIN
+-- ============================================
 -- Supports Google Translate, DeepL, and translate-shell
-
 
 return {
     {
         "uga-rosa/translate.nvim",
-        cmd = "Translate", -- Lazy loading, only when you use the command
-        keys = {
-            -- Keyboard shortcuts for quick translation
-            { "<leader>te", mode = { "n", "v" }, desc = "Traducir a Español" },
-            { "<leader>ti", mode = { "n", "v" }, desc = "Traducir a Inglés" },
-            { "<leader>tc", mode = { "n", "v" }, desc = "Traducir comentario" },
-            { "<leader>tw", mode = "n", desc = "Traducir palabra bajo cursor" },
-        },
+        cmd = "Translate", -- Lazy load
         config = function()
+            -- ============================================
+            -- TRANSLATE SETUP
+            -- ============================================
             require("translate").setup({
-                -- Default configuration
+                -- ============================================
+                -- DEFAULT CONFIGURATION
+                -- ============================================
                 default = {
-                    command = "google",             -- Translation engine (google, deepl_free, deepl_pro, translate_shell)
-                    output = "floating",            -- Output method (floating, split, insert, replace, register)
+                    command = "google",             -- Translation engine
+                    output = "floating",            -- Output method
                     parse_before = "trim,natural",  -- Text preprocessing
-                    parse_after = "window",         -- Post-processing of the result
+                    parse_after = "window",         -- Post-processing
                 },
 
-                -- Setting presets
+                -- ============================================
+                -- PRESET CONFIGURATION
+                -- ============================================
                 preset = {
                     output = {
-                        -- Floating Window Settings
+                        -- Floating window settings
                         floating = {
                             relative = "cursor",
                             style = "minimal",
-                            width = nil,        -- Automatically adjusts
-                            height = nil,       -- Automatically adjusts
+                            width = nil,        -- Auto-adjust
+                            height = nil,       -- Auto-adjust
                             row = 1,
                             col = 1,
-                            border = "rounded", -- Rounded edge
+                            border = "rounded",
                             filetype = "translate",
                             zindex = 50,
                         },
-                        -- Split Window Setup
+
+                        -- Split window settings
                         split = {
-                            position = "bottom", -- "top" or "bottom"
+                            position = "bottom",
                             min_size = 5,
-                            max_size = 0.3,      -- 30% of the window height
+                            max_size = 0.3,
                             name = "translate://output",
                             filetype = "translate",
-                            append = true,       -- Keep previous translations
+                            append = true,
                         },
-                        -- Insertion configuration
+
+                        -- Insert configuration
                         insert = {
-                            base = "bottom",        -- "top" or "bottom"
-                            off = 1,                -- Offset lines
+                            base = "bottom",
+                            off = 1,
                         },
-                        -- Registry settings
+
+                        -- Register settings
                         register = {
-                            name = "+",         -- Use the system clipboard
+                            name = "+",
                         },
                     },
+
                     parse_after = {
                         -- Fit text to window width
                         window = {
-                            width = 0.8,        -- 80% of window width
+                            width = 0.8,
                         },
                     },
                 },
 
-                -- Mute success/error messages
+                -- Mute messages
                 silent = false,
             })
 
-            -- ============================================
-            -- KEYMAPS AND CUSTOM COMMANDS
-            -- ============================================
-
-            local function translate(mode, target, output)
-                return function()
-                    local cmd = string.format("Translate %s -output=%s", target, output or "floating")
-                    if mode == "n" then
-                        vim.cmd(cmd)
-                    else
-                        vim.cmd("'<,'>" .. cmd)
-                    end
-                end
-            end
-
-            local opts = { noremap = true, silent = true }
+            -- All keymaps moved to remaps.lua
 
             -- ============================================
-            -- TRANSLATION INTO SPANISH
+            -- USER COMMANDS
             -- ============================================
 
-            -- Normal mode: translates current line
-            vim.keymap.set("n", "<leader>te", translate("n", "ES"),
-                vim.tbl_extend("force", opts, { desc = "Traducir línea a Español (flotante)" }))
-
-            -- Visual mode: translate selection
-            vim.keymap.set("v", "<leader>te", translate("v", "ES"),
-                vim.tbl_extend("force", opts, { desc = "Traducir selección a Español (flotante)" }))
-
-            -- Translate and insert below
-            vim.keymap.set("n", "<leader>tei", translate("n", "ES", "insert"),
-                vim.tbl_extend("force", opts, { desc = "Traducir e insertar a Español" }))
-            vim.keymap.set("v", "<leader>tei", translate("v", "ES", "insert"),
-                vim.tbl_extend("force", opts, { desc = "Traducir e insertar a Español" }))
-
-            -- Translate and replace
-            vim.keymap.set("n", "<leader>ter", translate("n", "ES", "replace"),
-                vim.tbl_extend("force", opts, { desc = "Traducir y reemplazar a Español" }))
-            vim.keymap.set("v", "<leader>ter", translate("v", "ES", "replace"),
-                vim.tbl_extend("force", opts, { desc = "Traducir y reemplazar a Español" }))
-
-            -- ============================================
-            -- ENGLISH TRANSLATION
-            -- ============================================
-
-            vim.keymap.set("n", "<leader>ti", translate("n", "EN"),
-                vim.tbl_extend("force", opts, { desc = "Traducir línea a Inglés (flotante)" }))
-            vim.keymap.set("v", "<leader>ti", translate("v", "EN"),
-                vim.tbl_extend("force", opts, { desc = "Traducir selección a Inglés (flotante)" }))
-
-            vim.keymap.set("n", "<leader>tii", translate("n", "EN", "insert"),
-                vim.tbl_extend("force", opts, { desc = "Traducir e insertar a Inglés" }))
-            vim.keymap.set("v", "<leader>tii", translate("v", "EN", "insert"),
-                vim.tbl_extend("force", opts, { desc = "Traducir e insertar a Inglés" }))
-
-            vim.keymap.set("n", "<leader>tir", translate("n", "EN", "replace"),
-                vim.tbl_extend("force", opts, { desc = "Traducir y reemplazar a Inglés" }))
-            vim.keymap.set("v", "<leader>tir", translate("v", "EN", "replace"),
-                vim.tbl_extend("force", opts, { desc = "Traducir y reemplazar a Inglés" }))
-
-            -- ============================================
-            -- COMMENT TRANSLATION
-            -- ============================================
-
-            -- Translate the entire comment where the cursor is
-            vim.keymap.set("n", "<leader>tc", function()
-                vim.cmd("Translate ES -comment")
-            end, vim.tbl_extend("force", opts, { desc = "Traducir comentario a Español" }))
-
-            vim.keymap.set("n", "<leader>tci", function()
-                vim.cmd("Translate EN -comment")
-            end, vim.tbl_extend("force", opts, { desc = "Traducir comentario a Inglés" }))
-
-            -- ============================================
-            -- TRANSLATION OF WORD UNDER CURSOR
-            -- ============================================
-
-            vim.keymap.set("n", "<leader>tw", function()
-                -- Select the word under the cursor and translate
-                vim.cmd("normal! viw")
-                vim.cmd("'<,'>Translate ES")
-            end, vim.tbl_extend("force", opts, { desc = "Traducir palabra a Español" }))
-
-            vim.keymap.set("n", "<leader>twi", function()
-                vim.cmd("normal! viw")
-                vim.cmd("'<,'>Translate EN")
-            end, vim.tbl_extend("force", opts, { desc = "Traducir palabra a Inglés" }))
-
-            -- ============================================
-            -- SPLIT WINDOW FOR TRANSLATIONS
-            -- ============================================
-
-            vim.keymap.set("n", "<leader>ts", translate("n", "ES", "split"),
-                vim.tbl_extend("force", opts, { desc = "Traducir en ventana dividida" }))
-            vim.keymap.set("v", "<leader>ts", translate("v", "ES", "split"),
-                vim.tbl_extend("force", opts, { desc = "Traducir en ventana dividida" }))
-
-            -- ============================================
-            -- CUSTOM USER COMMANDS
-            -- ============================================
-
-            -- Command to display help
+            -- Help command
             vim.api.nvim_create_user_command("TranslateHelp", function()
                 local help_text = [[
 ╔══════════════════════════════════════════════════════════════╗
@@ -198,32 +108,23 @@ COMENTARIOS:
 VENTANA DIVIDIDA:
   <leader>ts     - Abrir traducción en ventana dividida
 
-USO VISUAL:
-  - Selecciona texto con 'v', 'V' o Ctrl-v
-  - Usa cualquiera de los atajos anteriores
-  - La traducción se aplica a la selección
-
 COMANDO MANUAL:
   :Translate {idioma} [-options]
   Ejemplo: :Translate ES
   Ejemplo: :Translate EN -output=split
-  Ejemplo: :Translate ES -comment
 
 IDIOMAS COMUNES:
   ES - Español    EN - Inglés    FR - Francés
   DE - Alemán     IT - Italiano  PT - Portugués
-  ZH - Chino      JA - Japonés   KO - Coreano
-
-NOTA: Por defecto usa Google Translate (no requiere API key)
 ]]
                 vim.notify(help_text, vim.log.levels.INFO, {
                     title = "Translate.nvim",
                     timeout = 10000,
                 })
                 print(help_text)
-            end, { desc = "Mostrar ayuda de Translate.nvim" })
+            end, { desc = "Show Translate.nvim help" })
 
-            -- Command to change the translation engine
+            -- Change translation engine command
             vim.api.nvim_create_user_command("TranslateEngine", function(opts)
                 local engine = opts.args
                 local valid_engines = { "google", "deepl_free", "deepl_pro", "translate_shell" }
@@ -241,11 +142,11 @@ NOTA: Por defecto usa Google Translate (no requiere API key)
                 complete = function()
                     return { "google", "deepl_free", "deepl_pro", "translate_shell" }
                 end,
-                desc = "Cambiar motor de traducción"
+                desc = "Change translation engine"
             })
 
-            -- Successful upload notification
-            vim.notify("Translate.nvim cargado - Usa <leader>te/ti o :TranslateHelp", vim.log.levels.INFO, {
+            -- Startup notification
+            vim.notify("Translate.nvim loaded - Use <leader>te/ti or :TranslateHelp", vim.log.levels.INFO, {
                 title = "Translate",
                 timeout = 3000,
             })

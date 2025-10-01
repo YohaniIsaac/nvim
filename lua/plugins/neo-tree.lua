@@ -1,3 +1,6 @@
+-- ============================================
+-- NEO-TREE - FILE EXPLORER
+-- ============================================
 return {
     {
         'nvim-neo-tree/neo-tree.nvim',
@@ -8,9 +11,9 @@ return {
             'MunifTanjim/nui.nvim',
         },
         config = function()
-            -- Aplicar el esquema de colores ANTES de configurar NeoTree
-            -- vim.cmd("colorscheme tokyonight-moon")
-            -- Forzar transparencia con un pequeño retraso
+            -- ============================================
+            -- TRANSPARENCY CONFIGURATION
+            -- ============================================
             vim.defer_fn(function()
                 vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE" })
                 vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE" })
@@ -18,34 +21,47 @@ return {
                 vim.api.nvim_set_hl(0, "NeoTreeVertSplit", { bg = "NONE", fg = "#3d59a1" })
                 vim.api.nvim_set_hl(0, "NeoTreeWinSeparator", { bg = "NONE", fg = "#3d59a1" })
 
-                -- Colores especiales para archivos ocultos
+                -- Special colors for hidden files
                 vim.api.nvim_set_hl(0, "NeoTreeDotfile", { fg = "#7c6f64", italic = true })
                 vim.api.nvim_set_hl(0, "NeoTreeHiddenFolder", { fg = "#83a598", italic = true })
             end, 50)
 
-            -- Configuración de NeoTree
+            -- ============================================
+            -- NEO-TREE SETUP
+            -- ============================================
             require("neo-tree").setup({
+                -- ============================================
+                -- BEHAVIOR
+                -- ============================================
                 close_if_last_window = true,
                 enable_git_status = true,
                 enable_diagnostics = true,
+
+                -- ============================================
+                -- FILESYSTEM OPTIONS
+                -- ============================================
                 filesystem = {
                     filtered_items = {
-                        visible = true,        -- CAMBIADO: Ahora muestra elementos filtrados
-                        hide_dotfiles = false, -- CAMBIADO: Ahora muestra dotfiles
+                        visible = true,        -- Show filtered items
+                        hide_dotfiles = false, -- Show dotfiles
                         hide_gitignored = false,
-                        hide_hidden = false,   -- AÑADIDO: Muestra archivos ocultos del sistema
-                        never_show = {         -- AÑADIDO: Lista de archivos que nunca mostrar
+                        hide_hidden = false,   -- Show hidden system files
+                        never_show = {         -- List of files to never display
                             ".DS_Store",
                             "thumbs.db",
                         },
-                        never_show_by_pattern = { -- AÑADIDO: Patrones que nunca mostrar
+                        never_show_by_pattern = { -- Patterns that never show
                             --".null-ls_*",
                         },
                     },
                     follow_current_file = { enabled = true },
                     use_libuv_file_watcher = true,
-                    hijack_netrw_behavior = "open_default", -- AÑADIDO: Mejor integración
+                    hijack_netrw_behavior = "open_default", -- Better integration
                 },
+
+                -- ============================================
+                -- ICON CONFIGURATION
+                -- ============================================
                 default_component_configs = {
                     icon = {
                         folder_closed = "",
@@ -72,6 +88,10 @@ return {
                         highlight = "NeoTreeFileName",
                     },
                 },
+
+                -- ============================================
+                -- WINDOW CONFIGURATION
+                -- ============================================
                 window = {
                     width = 35,
                     mappings = {
@@ -82,7 +102,10 @@ return {
                         ["<F5>"] = "refresh",    -- AÑADIDO: Refrescar vista
                     },
                 },
-                -- Función para alternar archivos ocultos
+
+                -- ============================================
+                -- CUSTOM COMMANDS
+                -- ============================================
                 commands = {
                     toggle_hidden = function(state)
                         state.filtered_items.visible = not state.filtered_items.visible
@@ -91,11 +114,13 @@ return {
                 },
             })
 
-            -- Mensaje informativo una sola vez
+            -- ============================================
+            -- INFORMATIVE MESSAGE (ONE TIME)
+            -- ============================================
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "neo-tree",
                 callback = function()
-                    -- Usar un timer para mostrar el mensaje después de que Neo-tree se haya cargado completamente
+                    -- Use a timer to display the message after Neo-tree has fully loaded
                     vim.defer_fn(function()
                         if vim.fn.has('nvim-0.8') == 1 then
                             vim.notify("Presiona 'H' en Neo-tree para alternar archivos ocultos", vim.log.levels.INFO, {

@@ -1,23 +1,45 @@
+-- ============================================
+-- LUALINE - STATUS LINE
+-- ============================================
 return {
-    'nvim-lualine/lualine.nvim',
-    config = function()
-        require('lualine').setup({
-            options = {
-                theme = 'dracula',
-            },
-            sections = {
-                lualine_c = {
-                    { 'filename', path = 2 } -- path = 2 muestra la ruta completa del archivo
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            require('lualine').setup({
+                -- ============================================
+                -- THEME
+                -- ============================================
+                options = {
+                    theme = 'dracula',
+                    component_separators = { left = '', right = ''},
+                    section_separators = { left = '', right = ''},
                 },
-                lualine_x = {
-                    'filetype', -- Muestra el tipo de lenguaje de código
-                    {
-                        function() return os.date("%H:%M") end, -- Muestra la hora en formato 24 horas (HH:MM)
-                        icon = '🕒' -- Opcional: agrega un ícono de reloj
-                    },
-                },
-            }
-        })
-    end
-}
 
+                -- ============================================
+                -- SECTIONS
+                -- ============================================
+                sections = {
+                    -- Center section: Full file path
+                    lualine_c = {
+                        {
+                            'filename',
+                            path = 2  -- 0 = just filename, 1 = relative path, 2 = absolute path
+                        }
+                    },
+
+                    -- Right section: Filetype and time
+                    lualine_x = {
+                        'filetype', -- Show code language/filetype
+                        {
+                            function()
+                                return os.date("%H:%M")
+                            end,
+                            icon = '🕒' -- Clock icon
+                        },
+                    },
+                }
+            })
+        end
+    }
+}

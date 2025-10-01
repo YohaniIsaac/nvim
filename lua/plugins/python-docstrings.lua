@@ -1,6 +1,7 @@
--- lua/plugins/python-docstring.lua (VERSIÓN SIMPLIFICADA)
+-- ============================================
+-- NVIM-UFO - ADVANCED FOLDING FOR PYTHON DOCSTRINGS
+-- ============================================
 return {
-    -- Plugin para folding avanzado
     {
         "kevinhwang91/nvim-ufo",
         dependencies = {
@@ -8,14 +9,21 @@ return {
             "nvim-treesitter/nvim-treesitter",
         },
         config = function()
-            -- Configuración básica para folding
+            -- ============================================
+            -- FOLDING CONFIGURATION
+            -- ============================================
             vim.o.foldcolumn = '0'
             vim.o.foldlevel = 99
             vim.o.foldlevelstart = 99
             vim.o.foldenable = true
 
-            -- Configuración de nvim-ufo
+            -- ============================================
+            -- NVIM-UFO SETUP
+            -- ============================================
             require('ufo').setup({
+                -- ============================================
+                -- PROVIDER SELECTOR
+                -- ============================================
                 provider_selector = function(bufnr, filetype, buftype)
                     if filetype == 'python' then
                         return {'treesitter', 'indent'}
@@ -23,7 +31,10 @@ return {
                         return {'treesitter', 'indent'}
                     end
                 end,
-                -- Configuración para Python docstrings
+
+                -- ============================================
+                -- FOLD VIRTUAL TEXT HANDLER
+                -- ============================================
                 fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
                     local newVirtText = {}
                     local suffix = ('  %d líneas'):format(endLnum - lnum)
@@ -49,15 +60,19 @@ return {
                         curWidth = curWidth + chunkWidth
                     end
 
-                    -- Cambiar el color del texto plegado para docstrings
+                    -- Change the color of folded text for docstrings
                     table.insert(newVirtText, {suffix, 'MoreMsg'})
                     return newVirtText
                 end
             })
 
-            -- Keymaps para folding avanzado (opcionales, complementan los básicos)
-            vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = 'Abrir todos los pliegues' })
-            vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = 'Cerrar todos los pliegues' })
+            -- ============================================
+            -- ADVANCED FOLDING KEYMAPS
+            -- ============================================
+            vim.keymap.set('n', 'zR', require('ufo').openAllFolds,
+                { desc = 'Abrir todos los pliegues' })
+            vim.keymap.set('n', 'zM', require('ufo').closeAllFolds,
+                { desc = 'Cerrar todos los pliegues' })
         end,
     }
 }
