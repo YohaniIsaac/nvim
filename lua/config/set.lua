@@ -68,3 +68,15 @@ vim.api.nvim_create_autocmd('CmdlineLeave', {
 -- Customize the color to match your theme
 -- ============================================
 vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#2a2a2a" })
+
+-- ============================================
+-- HIGHLIGHT CURRENT LINE NUMBER
+-- ============================================
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number' -- Only highlights the number, not the line
+-- -- Color for the current line number (where the cursor is)
+vim.api.nvim_set_hl(0, "CursorLineNr", {
+    fg = "#FFD700",  -- Bright golden color
+    bold = true,     -- Bold type
+    bg = "NONE"      -- Bottomless
+})
