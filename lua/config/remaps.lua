@@ -241,19 +241,7 @@ vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -1<CR>", { noremap = tru
 -- vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, silent = true })
 
 -- Smart save with whitespace cleaning option
-vim.keymap.set('n', '<C-s>', function()
-    -- Check if file has trailing whitespace
-    local has_whitespace = vim.fn.search('\\s\\+$', 'nw') > 0
-
-    if has_whitespace then
-        local choice = vim.fn.input("Clean whitespace? (y/n): ")
-        if choice:lower() == 'y' then
-            vim.cmd('StripWhitespace')              -- Requires vim-better-whitespace plugin
-        end
-    end
-
-    vim.cmd('write')                                -- Save file
-end, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-s>', ':write<CR>', { noremap = true, silent = true })
 
 -- Copy entire file content to clipboard
 -- Note: 'opts' variable is not defined, this might cause an error
