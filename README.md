@@ -19,15 +19,17 @@ Explorador de archivos moderno con soporte para Git.
 #### **Telescope**
 Buscador fuzzy para archivos, texto y más.
 
-**Uso:**
+**Uso básico:**
 - `<leader>pf` - Buscar archivos en proyecto
 - `Ctrl+p` - Buscar archivos de Git
 - `<leader>ps` - Búsqueda de texto en vivo
-- `<leader>ff` - Buscar archivos (incluye ocultos)
-- `<leader>fg` - Grep en vivo (incluye ocultos)
-- `<leader>gg` - Buscar palabra bajo cursor
-- `<leader>gw` - Buscar palabra exacta
-- `<leader>fe` - Búsqueda avanzada con exclusiones
+
+**Búsquedas avanzadas (incluyen archivos ocultos):**
+- `<leader>ff` - Live grep con todos los filtros
+- `<leader>fg` - Live grep (incluye ocultos, simple)
+- `<leader>gg` - Buscar palabra bajo cursor (simple)
+- `<leader>gw` - Buscar palabra bajo cursor (con filtros)
+- `<leader>fe` - Búsqueda avanzada con exclusiones interactivas
 
 #### **Harpoon**
 Navegación rápida entre archivos marcados.
@@ -41,7 +43,7 @@ Navegación rápida entre archivos marcados.
 Integración de FZF para búsquedas rápidas.
 
 **Uso:**
-- `<leader>ff` - Comando :Files
+- `<leader>fz` - Comando :Files
 
 ---
 
@@ -84,7 +86,6 @@ Comentar/descomentar código fácilmente.
 
 **Uso:**
 - `gc` - Toggle comentario (modo normal/visual)
-- `gcc` - Comentar línea actual
 
 #### **Conform**
 Formateo automático de código (clang-format para C/C++).
@@ -141,7 +142,7 @@ Herramienta Git integrada.
 Interfaz gráfica de Git.
 
 **Uso:**
-- `<leader>gg` - Abrir LazyGit
+- `<leader>fw` - Abrir LazyGit
 - `<leader>gl` - Abrir LazyGit (alternativo)
 
 #### **Git Blame**
@@ -173,23 +174,39 @@ Barra de pestañas para buffers.
 Traducción de texto con Google Translate.
 
 **Uso:**
+**Traducción básica:**
 - `<leader>te` - Traducir a español (flotante)
-- `<leader>ti` - Traducir a inglés
+- `<leader>ti` - Traducir a inglés (flotante)
 - `<leader>tw` - Traducir palabra bajo cursor (español)
-- `<leader>twi` - Traducir palabra (inglés)
+- `<leader>twi` - Traducir palabra bajo cursor (inglés)
+
+**Traducción con inserción:**
+- `<leader>tei` - Traducir e insertar (español)
+- `<leader>tii` - Traducir e insertar (inglés)
+
+**Traducción con reemplazo:**
+- `<leader>ter` - Traducir y reemplazar (español)
+- `<leader>tir` - Traducir y reemplazar (inglés)
+
+**Comentarios:**
 - `<leader>tc` - Traducir comentario (español)
 - `<leader>tci` - Traducir comentario (inglés)
-- `<leader>tei` - Traducir e insertar (español)
-- `<leader>ter` - Traducir y reemplazar (español)
+
+**Ventana dividida:**
 - `<leader>ts` - Traducir en ventana dividida
+
+**Comandos:**
 - `:TranslateHelp` - Ayuda completa
-- `:TranslateEngine {motor}` - Cambiar motor
+- `:TranslateEngine {motor}` - Cambiar motor de traducción
 
 #### **Markdown Preview**
 Vista previa de Markdown en navegador.
 
 **Uso:**
 - `Ctrl+k` - Alternar vista previa (solo en .md)
+- `:MarkdownPreview` - Vista previa (solo en .md)
+- `:MarkdownPreviewStop` - Detener vista previa (solo en .md)
+- `:MarkdownPreviewToggle` - Alternar vista vista previa (solo en .md)
 - Se abre en http://127.0.0.1:8888
 
 #### **Window Picker**
@@ -257,7 +274,7 @@ Emojis animados en pantalla (diversión).
 
 | Atajo | Acción |
 |-------|--------|
-| `<leader>gg` | LazyGit |
+| `<leader>fw` | LazyGit |
 | `<leader>gs` | Git status |
 | `<leader>gb` | Ver ramas |
 
@@ -268,7 +285,12 @@ Emojis animados en pantalla (diversión).
 | `<leader>te` | Traducir a español |
 | `<leader>ti` | Traducir a inglés |
 | `<leader>tw` | Traducir palabra (ES) |
-| `<leader>tc` | Traducir comentario |
+| `<leader>twi` | Traducir palabra (EN) |
+| `<leader>tc` | Traducir comentario (ES) |
+| `<leader>tci` | Traducir comentario (EN) |
+| `<leader>tei` | Traducir e insertar (ES) |
+| `<leader>ter` | Traducir y reemplazar (ES) |
+| `<leader>ts` | Traducir en split |
 
 ### Python
 

@@ -457,7 +457,7 @@ end, { noremap = true, silent = true, desc = "Format file or range (in visual mo
 -- ============================================
 -- FZF - FUZZY FINDER
 -- ============================================
-vim.keymap.set("n", "<leader>ff", ":Files<CR>",
+vim.keymap.set("n", "<leader>fz", ":Files<CR>",
     { noremap = true, silent = true, desc = 'FZF: Find files' })
 
 -- ============================================
