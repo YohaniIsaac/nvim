@@ -1,6 +1,3 @@
--- lua/plugins/latex.lua
--- Configuración de VimTeX con Okular
-
 return {
     {
         "lervag/vimtex",
@@ -8,13 +5,13 @@ return {
         ft = { "tex", "bib" },
         config = function()
             -- ============================================
-            -- CONFIGURACIÓN GENERAL
+            -- GENERAL SETTINGS
             -- ============================================
             vim.g.vimtex_enabled = 1
             vim.g.vimtex_compiler_method = 'latexmk'
 
             -- ============================================
-            -- COMPILADOR - CARPETA BUILD
+            -- COMPILER - BUILD FOLDER
             -- ============================================
             vim.g.vimtex_compiler_latexmk = {
                 build_dir = 'build',
@@ -40,11 +37,11 @@ return {
             vim.g.vimtex_view_general_viewer = 'okular'
             vim.g.vimtex_view_general_options = '--unique file:@pdf\\#src:@line@tex'
 
-            -- Sincronización inversa (de Okular a Neovim)
+            -- Reverse sync (from Okular to Neovim)
             vim.g.vimtex_compiler_progname = 'nvr'
 
             -- ============================================
-            -- SINTAXIS Y PLEGADO
+            -- SYNTAX AND FOLDING
             -- ============================================
             vim.g.vimtex_fold_enabled = 1
             vim.g.vimtex_fold_manual = 0
@@ -52,19 +49,19 @@ return {
             vim.g.vimtex_syntax_conceal_disable = 0
 
             -- ============================================
-            -- QUICKFIX (ERRORES)
+            -- QUICKFIX (ERRORS)
             -- ============================================
             vim.g.vimtex_quickfix_mode = 2
             vim.g.vimtex_quickfix_open_on_warning = 0
 
             -- ============================================
-            -- INDENTACIÓN
+            -- INDENTATION
             -- ============================================
             vim.g.vimtex_indent_enabled = 1
             vim.g.vimtex_indent_bib_enabled = 1
 
             -- ============================================
-            -- TABLA DE CONTENIDOS
+            -- TABLE OF CONTENTS
             -- ============================================
             vim.g.vimtex_toc_config = {
                 name = 'TOC',
@@ -76,12 +73,12 @@ return {
             }
 
             -- ============================================
-            -- FUNCIONES AUXILIARES
+            -- AUXILIARY FUNCTIONS
             -- ============================================
 
-            -- Abrir PDF en Okular (busca en build/ desde la raíz del proyecto)
+            -- Open PDF in Okular (search in build/ from the project root)
             local function open_pdf_okular()
-                -- Usar las variables de VimTeX para obtener la raíz del proyecto
+                -- Using VimTeX variables to get the project root
                 local vimtex_data = vim.b.vimtex
 
                 if not vimtex_data then
@@ -90,17 +87,17 @@ return {
                     return
                 end
 
-                -- Obtener la raíz del proyecto y el nombre del archivo principal
+                -- Get the project root and main file name
                 local project_root = vimtex_data.root or vim.fn.expand('%:p:h')
                 local main_name = vimtex_data.name or vim.fn.expand('%:t:r')
 
-                -- Construir rutas posibles del PDF (desde la raíz del proyecto)
+                -- Build possible PDF paths (from the project root)
                 local pdf_paths = {
-                    project_root .. '/build/' .. main_name .. '.pdf',  -- Raíz/build/main.pdf
-                    project_root .. '/' .. main_name .. '.pdf',        -- Raíz/main.pdf
+                    project_root .. '/build/' .. main_name .. '.pdf',  -- Root/build/main.pdf
+                    project_root .. '/' .. main_name .. '.pdf',        -- Root/main.pdf
                 }
 
-                -- Buscar el PDF en las ubicaciones posibles
+                -- Find the PDF in the possible locations
                 local pdf_path = nil
                 for _, path in ipairs(pdf_paths) do
                     if vim.fn.filereadable(path) == 1 then
@@ -109,7 +106,7 @@ return {
                     end
                 end
 
-                -- Si no se encontró, mostrar mensaje de error con rutas buscadas
+                -- If not found, display error message with searched paths
                 if not pdf_path then
                     local search_info = string.format(
                         '⚠️  PDF no encontrado\n\n' ..
@@ -126,18 +123,18 @@ return {
                     return
                 end
 
-                -- Verificar que Okular esté instalado
+                -- Verify that Okular is installed
                 if vim.fn.executable('okular') == 0 then
                     vim.notify('⚠️  Okular no está instalado\nInstala con: sudo pacman -S okular',
                         vim.log.levels.ERROR)
                     return
                 end
 
-                -- Obtener archivo .tex actual y línea para sincronización
+                -- Get current .tex file and line for synchronization
                 local tex_file = vim.fn.expand('%:p')
                 local current_line = vim.fn.line('.')
 
-                -- Abrir Okular con sincronización
+                -- Open Okular with synchronization
                 local cmd = string.format(
                     'okular --unique "file:%s#src:%d %s" > /dev/null 2>&1 &',
                     pdf_path,
@@ -152,7 +149,7 @@ return {
                     vim.log.levels.INFO)
             end
 
-            -- Crear carpeta build si no existe (en la raíz del proyecto)
+            -- Create build folder if it doesn't exist (in the project root)
             local function ensure_build_dir()
                 local vimtex_data = vim.b.vimtex
                 local project_root = vimtex_data and vimtex_data.root or vim.fn.expand('%:p:h')
@@ -165,7 +162,7 @@ return {
                 end
             end
 
-            -- Limpiar carpeta build (en la raíz del proyecto)
+            -- Clean build folder (in the root of the project)
             local function clean_build_dir()
                 local vimtex_data = vim.b.vimtex
                 local project_root = vimtex_data and vimtex_data.root or vim.fn.expand('%:p:h')
@@ -184,7 +181,7 @@ return {
                 end
             end
 
-            -- Recompilar desde cero
+            -- Recompile from scratch
             local function rebuild_clean()
                 local vimtex_data = vim.b.vimtex
                 local project_root = vimtex_data and vimtex_data.root or vim.fn.expand('%:p:h')
@@ -203,7 +200,7 @@ return {
                 end, 500)
             end
 
-            -- Copiar PDF a raíz (del proyecto, no del archivo actual)
+            -- Copy PDF to root (of the project, not the current file)
             local function copy_pdf_to_root()
                 local vimtex_data = vim.b.vimtex
 
@@ -230,7 +227,7 @@ return {
             end
 
             -- ============================================
-            -- COMANDOS PERSONALIZADOS
+            -- CUSTOM COMMANDS
             -- ============================================
 
             vim.api.nvim_create_user_command("BuildClean", clean_build_dir,
@@ -329,7 +326,7 @@ Conclusiones.
                 vim.notify("📄 Template LaTeX insertado", vim.log.levels.INFO)
             end, { desc = "Insertar template LaTeX" })
 
-            -- Comando de debug para ver información del proyecto
+            -- Debug command to view project information
             vim.api.nvim_create_user_command("LaTeXDebug", function()
                 local vimtex_data = vim.b.vimtex
 
@@ -342,7 +339,7 @@ Conclusiones.
                 local tex_name = vim.fn.expand('%:t')
                 local current_dir = vim.fn.expand('%:p:h')
 
-                -- Usar variables de VimTeX
+                -- Using VimTeX Variables
                 local project_root = vimtex_data.root or current_dir
                 local main_name = vimtex_data.name or vim.fn.expand('%:t:r')
                 local build_dir = project_root .. '/build'
@@ -406,26 +403,27 @@ Conclusiones.
             end, { desc = "Debug info LaTeX" })
 
             -- ============================================
-            -- AUTOCOMANDO PARA ARCHIVOS .tex
+            -- AUTOCOMMAND FOR .TEX FILES
             -- ============================================
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "tex",
                 callback = function()
-                    -- Configuraciones específicas del buffer
+                    -- Specific buffer settings
                     vim.opt_local.conceallevel = 2
-                    vim.opt_local.textwidth = 80
-                    vim.opt_local.colorcolumn = "80"
-
-                    vim.notify("📝 VimTeX cargado - Okular como visor",
-                        vim.log.levels.INFO, {
-                        title = "LaTeX",
-                        timeout = 2000,
-                    })
+                    vim.opt_local.textwidth = 0
+                    vim.opt_local.formatoptions:remove('t') -- Disable autotext
+                    -- ============================================
+                    -- WORD WRAP - VISUAL LINE ADJUSTMENT
+                    -- ============================================
+                    vim.opt_local.wrap = true           -- Activate visual line adjustment
+                    vim.opt_local.linebreak = true      -- Break into complete words
+                    vim.opt_local.breakindent = true    -- Maintain indentation on wrapped lines
+                    vim.opt_local.showbreak = "↪ "      -- Visual wrapped line indicator
                 end,
             })
 
             -- ============================================
-            -- INTEGRACIÓN CON NVIM-CMP
+            -- INTEGRATION WITH NVIM-CMP
             -- ============================================
             local cmp_status, cmp = pcall(require, 'cmp')
             if cmp_status then
@@ -440,7 +438,7 @@ Conclusiones.
             end
 
             -- ============================================
-            -- SNIPPETS BÁSICOS
+            -- BASIC SNIPPETS
             -- ============================================
             local luasnip_status, luasnip = pcall(require, 'luasnip')
             if luasnip_status then
@@ -483,9 +481,9 @@ Conclusiones.
             end
 
             -- ============================================
-            -- EXPORTAR FUNCIONES PARA REMAPS
+            -- EXPORT FUNCTIONS FOR REMAPS
             -- ============================================
-            -- Hacer las funciones accesibles globalmente
+            -- Make functions globally accessible
             _G.latex_open_pdf_okular = open_pdf_okular
             _G.latex_rebuild_clean = rebuild_clean
             _G.latex_clean_build_dir = clean_build_dir
@@ -494,7 +492,7 @@ Conclusiones.
     },
 
     -- ============================================
-    -- SNIPPETS ADICIONALES
+    -- ADDITIONAL SNIPPETS
     -- ============================================
     {
         "iurimateus/luasnip-latex-snippets.nvim",
