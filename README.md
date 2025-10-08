@@ -129,6 +129,65 @@ Plegado avanzado de docstrings de Python.
 
 ---
 
+### LaTeX
+
+#### **VimTeX**
+
+Editor LaTeX con compilación automática y visualización en Okular.
+
+**Características:**
+
+- Compilación continua con latexmk
+- Archivos auxiliares en carpeta `build/`
+- Sincronización bidireccional con Okular
+- Detección automática de la raíz del proyecto
+
+**Uso básico:**
+
+**Compilación:**
+
+- `<leader>ll` - Iniciar compilación continua
+- `<leader>lk` - Detener compilación
+- `<leader>lc` - Limpiar archivos auxiliares
+- `<leader>lb` - Recompilar desde cero (elimina build/)
+
+**Visualización:**
+
+- `<leader>lv` - Abrir PDF en Okular (busca en build/)
+- Click en PDF (Shift+Click) - Sincroniza Okular → Neovim
+
+**Navegación:**
+
+- `<leader>lt` - Tabla de contenidos
+- `<leader>li` - Información de VimTeX
+- `<leader>ls` - Estado de compilación
+- `<leader>le` - Ver errores
+- `<leader>lw` - Contar palabras
+
+**Gestión de build/:**
+
+- `<leader>ld` - Eliminar carpeta build/
+- `<leader>lx` - Copiar PDF a raíz del proyecto
+
+**Comandos:**
+
+- `:LaTeXHelp` - Ayuda completa de comandos
+- `:LaTeXDebug` - Ver información del proyecto (rutas, PDFs)
+- `:LaTeXTemplate` - Insertar plantilla básica
+- `:BuildClean` - Eliminar build/
+- `:BuildRebuild` - Limpiar y recompilar
+- `:PDFCopy` - Copiar PDF a raíz
+
+**Snippets disponibles:**
+
+- `eq` - Entorno equation
+- `fig` - Entorno figure con includegraphics
+- `sec` - Section con label
+
+**Nota:** VimTeX detecta automáticamente la raíz del proyecto, por lo que puedes trabajar en archivos dentro de subcarpetas y siempre compilará el documento principal.
+
+---
+
 ### Git
 
 #### **Vim Fugitive**

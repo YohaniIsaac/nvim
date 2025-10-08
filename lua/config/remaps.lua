@@ -563,3 +563,66 @@ vim.keymap.set("n", "<leader>ts", translate("n", "ES", "split"),
     vim.tbl_extend("force", translate_opts, { desc = "Translate in split window" }))
 vim.keymap.set("v", "<leader>ts", translate("v", "ES", "split"),
     vim.tbl_extend("force", translate_opts, { desc = "Translate in split window" }))
+
+-- ============================================
+-- LATEX - VIMTEX KEYMAPS
+-- ============================================
+-- These keymaps are only available in files .tex
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "tex",
+    callback = function()
+        local opts = { buffer = true, noremap = true, silent = true }
+
+        -- ============================================
+        -- COMPILATION
+        -- ============================================
+        vim.keymap.set('n', '<leader>ll', '<cmd>VimtexCompile<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Compilar' }))
+
+        vim.keymap.set('n', '<leader>lc', '<cmd>VimtexClean<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Limpiar auxiliares' }))
+
+        vim.keymap.set('n', '<leader>lk', '<cmd>VimtexStop<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Detener compilación' }))
+
+        -- ============================================
+        -- DISPLAY
+        -- ============================================
+        vim.keymap.set('n', '<leader>lv', function()
+            _G.latex_open_pdf_okular()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver PDF en Okular' }))
+
+        -- ============================================
+        -- NAVIGATION AND INFO
+        -- ============================================
+        vim.keymap.set('n', '<leader>lt', '<cmd>VimtexTocOpen<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Tabla de contenidos' }))
+
+        vim.keymap.set('n', '<leader>li', '<cmd>VimtexInfo<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Información VimTeX' }))
+
+        vim.keymap.set('n', '<leader>ls', '<cmd>VimtexStatus<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Estado compilación' }))
+
+        vim.keymap.set('n', '<leader>le', '<cmd>VimtexErrors<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver errores' }))
+
+        vim.keymap.set('n', '<leader>lw', '<cmd>VimtexCountWords<CR>',
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Contar palabras' }))
+
+        -- ============================================
+        -- BUILD/ MANAGEMENT
+        -- ============================================
+        vim.keymap.set('n', '<leader>lb', function()
+            _G.latex_rebuild_clean()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Recompilar desde cero' }))
+
+        vim.keymap.set('n', '<leader>ld', function()
+            _G.latex_clean_build_dir()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Eliminar build/' }))
+
+        vim.keymap.set('n', '<leader>lx', function()
+            _G.latex_copy_pdf_to_root()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Copiar PDF a raíz' }))
+    end,
+})
