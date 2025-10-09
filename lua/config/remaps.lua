@@ -604,7 +604,33 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set('n', '<leader>ls', '<cmd>VimtexStatus<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Estado compilación' }))
 
-        -- <leader>le ahora definido en lua/plugins/latex.lua para mostrar diagnósticos flotantes
+        -- ============================================
+        -- LSP DIAGNOSTICS
+        -- ============================================
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Ir a definición' }))
+
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver referencias' }))
+
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Documentación' }))
+
+        vim.keymap.set('n', '<leader>lp', vim.diagnostic.goto_prev,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Error anterior' }))
+
+        vim.keymap.set('n', '<leader>ln', vim.diagnostic.goto_next,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Siguiente error' }))
+
+        vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Mostrar diagnóstico flotante' }))
+
+        vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist,
+            vim.tbl_extend('force', opts, { desc = 'LaTeX: Lista de diagnósticos' }))
+
+        vim.keymap.set('n', '<leader>ee', function()
+            _G.latex_show_all_errors()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver todos los errores (texlab + ChkTeX)' }))
 
         vim.keymap.set('n', '<leader>lw', '<cmd>VimtexCountWords<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Contar palabras' }))
