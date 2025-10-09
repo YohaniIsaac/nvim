@@ -302,8 +302,10 @@ NAVEGACIÓN:
   <leader>lt    - Tabla de contenidos
   <leader>li    - Información de VimTeX
   <leader>ls    - Estado de compilación
-  <leader>le    - Ver errores
+  <leader>le    - Mostrar diagnóstico flotante (línea actual)
+  <leader>ee    - Ver TODOS los errores (texlab + ChkTeX completo)
   <leader>lw    - Contar palabras
+  [d / ]d       - Ir a error anterior/siguiente
 
 GESTIÓN DE BUILD/:
   <leader>lb    - Recompilar desde cero
@@ -317,6 +319,8 @@ UTILIDADES:
   :LaTeXHelp     - Mostrar esta ayuda
   :LaTeXDebug    - Ver info del proyecto (rutas, PDFs, etc)
   :LaTeXTemplate - Insertar template básico
+  :LaTeXChkTeX   - Ejecutar solo ChkTeX manualmente
+  :LaTeXErrors   - Ver análisis completo (texlab + ChkTeX)
 
 SNIPPETS:
   eq   - Ecuación
@@ -373,6 +377,170 @@ Conclusiones.
             end, { desc = "Insertar template LaTeX" })
 
             -- Debug command to view project information
+            -- Command to test ChkTeX manually
+            vim.api.nvim_create_user_command("LaTeXChkTeX", function()
+                local current_file = vim.fn.expand('%:p')
+
+                if vim.fn.filereadable(current_file) == 0 then
+                    vim.notify('⚠️  Archivo no válido', vim.log.levels.WARN)
+                    return
+                end
+
+                if vim.fn.executable('chktex') == 0 then
+                    vim.notify('❌ ChkTeX no está instalado\nInstala con: sudo pacman -S texlive-binextra',
+                        vim.log.levels.ERROR)
+                    return
+                end
+
+                -- Ejecutar ChkTeX y mostrar output
+                vim.notify('🔍 Ejecutando ChkTeX...', vim.log.levels.INFO)
+                local output = vim.fn.system('chktex -v0 -q ' .. vim.fn.shellescape(current_file))
+
+                if vim.v.shell_error == 0 and output == '' then
+                    vim.notify('✅ ChkTeX: No se encontraron problemas', vim.log.levels.INFO)
+                else
+                    -- Mostrar output en un buffer flotante
+                    local lines = vim.split(output, '\n')
+                    local buf = vim.api.nvim_create_buf(false, true)
+                    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+                    local width = 80
+                    local height = math.min(#lines + 2, 20)
+                    local win = vim.api.nvim_open_win(buf, true, {
+                        relative = 'editor',
+                        width = width,
+                        height = height,
+                        col = (vim.o.columns - width) / 2,
+                        row = (vim.o.lines - height) / 2,
+                        border = 'rounded',
+                        style = 'minimal',
+                        title = ' ChkTeX Results ',
+                        title_pos = 'center',
+                    })
+
+                    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+                    vim.api.nvim_buf_set_option(buf, 'filetype', 'chktex')
+                    vim.api.nvim_win_set_option(win, 'wrap', true)
+
+                    -- Cerrar con q o <Esc>
+                    vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = buf, silent = true })
+                    vim.keymap.set('n', '<Esc>', '<cmd>close<cr>', { buffer = buf, silent = true })
+                end
+            end, { desc = "Ejecutar ChkTeX manualmente" })
+
+            -- Combined errors view: ChkTeX + texlab diagnostics
+            local function show_all_errors()
+                local current_file = vim.fn.expand('%:p')
+                local current_bufnr = vim.api.nvim_get_current_buf()
+
+                if vim.fn.filereadable(current_file) == 0 then
+                    vim.notify('⚠️  Archivo no válido', vim.log.levels.WARN)
+                    return
+                end
+
+                -- Get texlab diagnostics
+                local diagnostics = vim.diagnostic.get(current_bufnr)
+
+                -- Build content
+                local lines = {}
+
+                -- Header
+                table.insert(lines, '╔══════════════════════════════════════════════════════════════════╗')
+                table.insert(lines, '║           ANÁLISIS COMPLETO DE ERRORES - LaTeX                  ║')
+                table.insert(lines, '╚══════════════════════════════════════════════════════════════════╝')
+                table.insert(lines, '')
+
+                -- Section 1: texlab diagnostics
+                table.insert(lines, '┌─ 📋 DIAGNÓSTICOS DE TEXLAB (LSP) ─────────────────────────────┐')
+                table.insert(lines, '')
+
+                if #diagnostics > 0 then
+                    for i, diag in ipairs(diagnostics) do
+                        local severity = ''
+                        if diag.severity == vim.diagnostic.severity.ERROR then
+                            severity = ' ERROR'
+                        elseif diag.severity == vim.diagnostic.severity.WARN then
+                            severity = ' WARN'
+                        elseif diag.severity == vim.diagnostic.severity.INFO then
+                            severity = ' INFO'
+                        else
+                            severity = ' HINT'
+                        end
+
+                        local line_num = diag.lnum + 1
+                        table.insert(lines, string.format('%d. %s [Línea %d]', i, severity, line_num))
+                        table.insert(lines, string.format('   %s', diag.message))
+                        table.insert(lines, '')
+                    end
+                else
+                    table.insert(lines, '   ✅ No se encontraron diagnósticos de texlab')
+                    table.insert(lines, '')
+                end
+
+                table.insert(lines, '└────────────────────────────────────────────────────────────────┘')
+                table.insert(lines, '')
+
+                -- Section 2: ChkTeX output
+                table.insert(lines, '┌─ 🔍 ANÁLISIS DE ChkTeX (Linting) ─────────────────────────────┐')
+                table.insert(lines, '')
+
+                if vim.fn.executable('chktex') == 1 then
+                    local chktex_output = vim.fn.system('chktex -v1 -q ' .. vim.fn.shellescape(current_file))
+
+                    if vim.v.shell_error == 0 and chktex_output == '' then
+                        table.insert(lines, '   ✅ ChkTeX: No se encontraron problemas')
+                        table.insert(lines, '')
+                    else
+                        local chktex_lines = vim.split(chktex_output, '\n')
+                        for _, line in ipairs(chktex_lines) do
+                            if line ~= '' then
+                                table.insert(lines, '   ' .. line)
+                            end
+                        end
+                    end
+                else
+                    table.insert(lines, '   ⚠️  ChkTeX no está instalado')
+                    table.insert(lines, '')
+                end
+
+                table.insert(lines, '└────────────────────────────────────────────────────────────────┘')
+                table.insert(lines, '')
+                table.insert(lines, 'Presiona q o <Esc> para cerrar')
+
+                -- Create floating window
+                local buf = vim.api.nvim_create_buf(false, true)
+                vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+                local width = math.min(100, vim.o.columns - 4)
+                local height = math.min(#lines + 2, vim.o.lines - 4)
+                local win = vim.api.nvim_open_win(buf, true, {
+                    relative = 'editor',
+                    width = width,
+                    height = height,
+                    col = (vim.o.columns - width) / 2,
+                    row = (vim.o.lines - height) / 2,
+                    border = 'rounded',
+                    style = 'minimal',
+                    title = ' Errores LaTeX ',
+                    title_pos = 'center',
+                })
+
+                vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+                vim.api.nvim_buf_set_option(buf, 'filetype', 'latex-errors')
+                vim.api.nvim_win_set_option(win, 'wrap', true)
+
+                -- Close with q or <Esc>
+                vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = buf, silent = true })
+                vim.keymap.set('n', '<Esc>', '<cmd>close<cr>', { buffer = buf, silent = true })
+            end
+
+            -- Export function globally
+            _G.latex_show_all_errors = show_all_errors
+
+            -- Create command
+            vim.api.nvim_create_user_command("LaTeXErrors", show_all_errors,
+                { desc = "Mostrar todos los errores (texlab + ChkTeX)" })
+
             vim.api.nvim_create_user_command("LaTeXDebug", function()
                 local vimtex_data = vim.b.vimtex
 
@@ -423,6 +591,11 @@ Conclusiones.
 
 🔧 Okular instalado:   %s
 🔧 latexmk instalado:  %s
+🔧 texlab instalado:   %s
+🔧 chktex instalado:   %s
+
+📝 ChkTeX config:      %s
+   Existe: %s
 
 💡 TIP: VimTeX busca el PDF y log en la raíz del proyecto,
         no en la carpeta del archivo actual.
@@ -444,7 +617,11 @@ Conclusiones.
                     log_file,
                     vim.fn.filereadable(log_file) == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('okular') == 1 and "✓ Sí" or "✗ No",
-                    vim.fn.executable('latexmk') == 1 and "✓ Sí" or "✗ No"
+                    vim.fn.executable('latexmk') == 1 and "✓ Sí" or "✗ No",
+                    vim.fn.executable('texlab') == 1 and "✓ Sí" or "✗ No",
+                    vim.fn.executable('chktex') == 1 and "✓ Sí" or "✗ No",
+                    vim.fn.expand('~/.chktexrc'),
+                    vim.fn.filereadable(vim.fn.expand('~/.chktexrc')) == 1 and "✓ Sí" or "✗ No"
                 )
 
                 print(debug_info)
@@ -471,6 +648,45 @@ Conclusiones.
                     vim.opt_local.linebreak = true      -- Break into complete words
                     vim.opt_local.breakindent = true    -- Maintain indentation on wrapped lines
                     vim.opt_local.showbreak = "↪ "      -- Visual wrapped line indicator
+
+                    -- ============================================
+                    -- KEYMAPS LSP PARA LATEX
+                    -- ============================================
+                    local opts = { buffer = true, noremap = true, silent = true }
+
+                    -- Navegación LSP
+                    vim.keymap.set('n', 'gd', vim.lsp.buf.definition,
+                        vim.tbl_extend('force', opts, { desc = 'Ir a definición (comando/ref)' }))
+
+                    vim.keymap.set('n', 'gr', vim.lsp.buf.references,
+                        vim.tbl_extend('force', opts, { desc = 'Ver referencias' }))
+
+                    vim.keymap.set('n', 'K', vim.lsp.buf.hover,
+                        vim.tbl_extend('force', opts, { desc = 'Documentación LaTeX' }))
+
+                    -- Diagnósticos (errores)
+                    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev,
+                        vim.tbl_extend('force', opts, { desc = 'Error anterior' }))
+
+                    vim.keymap.set('n', ']d', vim.diagnostic.goto_next,
+                        vim.tbl_extend('force', opts, { desc = 'Siguiente error' }))
+
+                    vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float,
+                        vim.tbl_extend('force', opts, { desc = 'Mostrar diagnóstico flotante' }))
+
+                    vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist,
+                        vim.tbl_extend('force', opts, { desc = 'Lista de diagnósticos' }))
+
+                    -- Combined errors view (ChkTeX + texlab)
+                    vim.keymap.set('n', '<leader>ee', function()
+                        _G.latex_show_all_errors()
+                    end, vim.tbl_extend('force', opts, { desc = 'Ver todos los errores (texlab + ChkTeX)' }))
+
+                    vim.notify("📝 VimTeX + texlab cargados - Usa <leader>l para comandos LaTeX",
+                        vim.log.levels.INFO, {
+                        title = "LaTeX",
+                        timeout = 2000,
+                    })
                 end,
             })
             -- ============================================
@@ -547,7 +763,7 @@ Conclusiones.
             -- EXPORT FUNCTIONS FOR REMAPS
             -- ============================================
             -- Make functions globally accessible
-            _G.latex_view_errors = view_latex_errors
+            -- _G.latex_view_errors = view_latex_errors  -- DEPRECATED: usar <leader>le para diagnósticos
             _G.latex_open_pdf_okular = open_pdf_okular
             _G.latex_rebuild_clean = rebuild_clean
             _G.latex_clean_build_dir = clean_build_dir
