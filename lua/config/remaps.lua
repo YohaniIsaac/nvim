@@ -604,8 +604,12 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set('n', '<leader>ls', '<cmd>VimtexStatus<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Estado compilación' }))
 
-        vim.keymap.set('n', '<leader>le', '<cmd>VimtexErrors<CR>',
-            vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver errores' }))
+        -- vim.keymap.set('n', '<leader>le', '<cmd>VimtexErrors<CR>',
+        --     vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver errores' }))
+
+        vim.keymap.set('n', '<leader>le', function()
+            _G.latex_view_errors()
+        end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver errores' }))
 
         vim.keymap.set('n', '<leader>lw', '<cmd>VimtexCountWords<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Contar palabras' }))

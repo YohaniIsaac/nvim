@@ -8,6 +8,7 @@ return {
             -- GENERAL SETTINGS
             -- ============================================
             vim.g.vimtex_enabled = 1
+            vim.g.vimtex_compiler_silent = 1
             vim.g.vimtex_compiler_method = 'latexmk'
 
             -- ============================================
@@ -51,8 +52,9 @@ return {
             -- ============================================
             -- QUICKFIX (ERRORS)
             -- ============================================
-            vim.g.vimtex_quickfix_mode = 2
+            vim.g.vimtex_quickfix_mode = 0
             vim.g.vimtex_quickfix_open_on_warning = 0
+            vim.g.vimtex_quickfix_method = 'latexlog'
 
             -- ============================================
             -- INDENTATION
@@ -75,14 +77,58 @@ return {
             -- ============================================
             -- AUXILIARY FUNCTIONS
             -- ============================================
+            -- Ver errores desde build/
+            local function view_latex_errors()
+                local vimtex_data = vim.b.vimtex
 
+                if not vimtex_data then
+                    vim.notify('⚠️  VimTeX no está inicializado', vim.log.levels.WARN)
+                    return
+                end
+
+                -- Usar directorio de trabajo actual (donde estás ahora)
+                local current_dir = vim.fn.getcwd()
+                local main_name = vimtex_data.name or vim.fn.expand('%:t:r')
+                local build_dir = current_dir .. '/build'
+                local log_file = build_dir .. '/' .. main_name .. '.log'
+
+                -- Verificar si existe el log
+                if vim.fn.filereadable(log_file) == 0 then
+                    vim.notify(string.format('⚠️  Archivo de log no encontrado\n%s\n\n💡 Compila primero con <leader>ll',
+                        log_file), vim.log.levels.WARN)
+                    return
+                end
+
+                -- Parsear el log y cargar errores en quickfix
+                vim.cmd('cclose')  -- Cerrar quickfix si está abierto
+
+                -- Usar cfile para cargar el log en quickfix
+                local success, err = pcall(function()
+                    vim.cmd('cfile ' .. vim.fn.fnameescape(log_file))
+                end)
+
+                if not success then
+                    vim.notify(string.format('⚠️  Error al parsear el log:\n%s', err), vim.log.levels.ERROR)
+                    return
+                end
+
+                -- Abrir quickfix si hay errores
+                local qf_list = vim.fn.getqflist()
+                if #qf_list == 0 then
+                    vim.notify('✅ No hay errores en el log', vim.log.levels.INFO)
+                else
+                    vim.cmd('copen')  -- Abrir quickfix
+                    vim.notify(string.format('📋 Encontrados %d errores/warnings', #qf_list),
+                        vim.log.levels.WARN)
+                end
+            end
             -- Open PDF in Okular (search in build/ from the project root)
             local function open_pdf_okular()
                 -- Using VimTeX variables to get the project root
                 local vimtex_data = vim.b.vimtex
 
                 if not vimtex_data then
-                    vim.notify('⚠️  VimTeX no está inicializado\nAbre un archivo .tex válido',
+                    vim.notify('VimTeX no está inicializado\nAbre un archivo .tex válido',
                         vim.log.levels.WARN)
                     return
                 end
@@ -109,11 +155,11 @@ return {
                 -- If not found, display error message with searched paths
                 if not pdf_path then
                     local search_info = string.format(
-                        '⚠️  PDF no encontrado\n\n' ..
-                        '📂 Raíz del proyecto: %s\n' ..
-                        '📄 Archivo principal: %s.tex\n\n' ..
+                        'PDF no encontrado\n\n' ..
+                        'Raíz del proyecto: %s\n' ..
+                        'Archivo principal: %s.tex\n\n' ..
                         'Buscado en:\n• %s\n• %s\n\n' ..
-                        '💡 Compila primero con <leader>ll',
+                        'Compila primero con <leader>ll',
                         project_root,
                         main_name,
                         pdf_paths[1],
@@ -125,7 +171,7 @@ return {
 
                 -- Verify that Okular is installed
                 if vim.fn.executable('okular') == 0 then
-                    vim.notify('⚠️  Okular no está instalado\nInstala con: sudo pacman -S okular',
+                    vim.notify('Okular no está instalado\nInstala con: sudo pacman -S okular',
                         vim.log.levels.ERROR)
                     return
                 end
@@ -143,7 +189,7 @@ return {
                 )
 
                 vim.fn.system(cmd)
-                vim.notify(string.format('📄 PDF abierto: %s\n📂 Desde: %s',
+                vim.notify(string.format('PDF abierto: %s\n Desde: %s',
                     vim.fn.fnamemodify(pdf_path, ':t'),
                     project_root),
                     vim.log.levels.INFO)
@@ -157,7 +203,7 @@ return {
 
                 if vim.fn.isdirectory(build_dir) == 0 then
                     vim.fn.mkdir(build_dir, 'p')
-                    vim.notify(string.format('📁 Carpeta build/ creada en:\n%s', project_root),
+                    vim.notify(string.format('Carpeta build/ creada en:\n%s', project_root),
                         vim.log.levels.INFO)
                 end
             end
@@ -169,7 +215,7 @@ return {
                 local build_dir = project_root .. '/build'
 
                 if vim.fn.isdirectory(build_dir) == 0 then
-                    vim.notify(string.format('📁 Carpeta build/ no existe en:\n%s', project_root),
+                    vim.notify(string.format('Carpeta build/ no existe en:\n%s', project_root),
                         vim.log.levels.INFO)
                     return
                 end
@@ -177,7 +223,7 @@ return {
                 local choice = vim.fn.input('¿Eliminar carpeta build/? (y/n): ')
                 if choice:lower() == 'y' then
                     vim.fn.delete(build_dir, 'rf')
-                    vim.notify('🗑️  Carpeta build/ eliminada', vim.log.levels.INFO)
+                    vim.notify('Carpeta build/ eliminada', vim.log.levels.INFO)
                 end
             end
 
@@ -191,7 +237,7 @@ return {
 
                 if vim.fn.isdirectory(build_dir) == 1 then
                     vim.fn.delete(build_dir, 'rf')
-                    vim.notify('🔄 Limpiando y recompilando...', vim.log.levels.INFO)
+                    vim.notify('Limpiando y recompilando...', vim.log.levels.INFO)
                 end
 
                 vim.defer_fn(function()
@@ -205,7 +251,7 @@ return {
                 local vimtex_data = vim.b.vimtex
 
                 if not vimtex_data then
-                    vim.notify('⚠️  VimTeX no está inicializado', vim.log.levels.WARN)
+                    vim.notify('VimTeX no está inicializado', vim.log.levels.WARN)
                     return
                 end
 
@@ -216,13 +262,13 @@ return {
                 local pdf_dst = project_root .. '/' .. main_name .. '.pdf'
 
                 if vim.fn.filereadable(pdf_src) == 0 then
-                    vim.notify(string.format('⚠️  PDF no encontrado\nBuscado en: %s', pdf_src),
+                    vim.notify(string.format('PDF no encontrado\nBuscado en: %s', pdf_src),
                         vim.log.levels.WARN)
                     return
                 end
 
                 vim.fn.system('cp ' .. pdf_src .. ' ' .. pdf_dst)
-                vim.notify(string.format('📄 PDF copiado\nDesde: build/\nHacia: %s', project_root),
+                vim.notify(string.format('PDF copiado\nDesde: build/\nHacia: %s', project_root),
                     vim.log.levels.INFO)
             end
 
@@ -323,7 +369,7 @@ Conclusiones.
 ]]
                 local lines = vim.split(template, '\n')
                 vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-                vim.notify("📄 Template LaTeX insertado", vim.log.levels.INFO)
+                vim.notify("Template LaTeX insertado", vim.log.levels.INFO)
             end, { desc = "Insertar template LaTeX" })
 
             -- Debug command to view project information
@@ -339,12 +385,13 @@ Conclusiones.
                 local tex_name = vim.fn.expand('%:t')
                 local current_dir = vim.fn.expand('%:p:h')
 
-                -- Using VimTeX Variables
+                -- Usar variables de VimTeX
                 local project_root = vimtex_data.root or current_dir
                 local main_name = vimtex_data.name or vim.fn.expand('%:t:r')
                 local build_dir = project_root .. '/build'
                 local pdf_build = build_dir .. '/' .. main_name .. '.pdf'
                 local pdf_root = project_root .. '/' .. main_name .. '.pdf'
+                local log_file = build_dir .. '/' .. main_name .. '.log'
 
                 local debug_info = string.format([[
 ╔═══════════════════════════════════════════════════════════╗
@@ -371,10 +418,13 @@ Conclusiones.
 🔍 PDF en raíz:        %s
    Existe: %s
 
+📋 Log file:           %s
+   Existe: %s
+
 🔧 Okular instalado:   %s
 🔧 latexmk instalado:  %s
 
-💡 TIP: VimTeX busca el PDF en la raíz del proyecto,
+💡 TIP: VimTeX busca el PDF y log en la raíz del proyecto,
         no en la carpeta del archivo actual.
 ]],
                     tex_file,
@@ -391,6 +441,8 @@ Conclusiones.
                     vim.fn.filereadable(pdf_build) == 1 and "✓ Sí" or "✗ No",
                     pdf_root,
                     vim.fn.filereadable(pdf_root) == 1 and "✓ Sí" or "✗ No",
+                    log_file,
+                    vim.fn.filereadable(log_file) == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('okular') == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('latexmk') == 1 and "✓ Sí" or "✗ No"
                 )
@@ -421,7 +473,18 @@ Conclusiones.
                     vim.opt_local.showbreak = "↪ "      -- Visual wrapped line indicator
                 end,
             })
-
+            -- ============================================
+            -- AUTO-SAVED BEFORE COMPILING
+            -- ============================================
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "VimtexEventCompileStarted",
+                callback = function()
+                    vim.cmd('silent! wall')  -- Save all modified buffers
+                    vim.notify("Archivos guardados antes de compilar", vim.log.levels.INFO, {
+                        timeout = 1000,
+                    })
+                end,
+            })
             -- ============================================
             -- INTEGRATION WITH NVIM-CMP
             -- ============================================
@@ -484,6 +547,7 @@ Conclusiones.
             -- EXPORT FUNCTIONS FOR REMAPS
             -- ============================================
             -- Make functions globally accessible
+            _G.latex_view_errors = view_latex_errors
             _G.latex_open_pdf_okular = open_pdf_okular
             _G.latex_rebuild_clean = rebuild_clean
             _G.latex_clean_build_dir = clean_build_dir
