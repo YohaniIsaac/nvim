@@ -161,8 +161,21 @@ Editor LaTeX con compilación automática y visualización en Okular.
 - `<leader>lt` - Tabla de contenidos
 - `<leader>li` - Información de VimTeX
 - `<leader>ls` - Estado de compilación
-- `<leader>le` - Ver errores
 - `<leader>lw` - Contar palabras
+
+**Navegación LSP (texlab):**
+
+- `gd` - Ir a definición (comandos, labels, referencias)
+- `gr` - Ver todas las referencias
+- `K` - Documentación hover (info de comandos LaTeX)
+
+**Diagnósticos (texlab + ChkTeX):**
+
+- `<leader>le` - Ver diagnóstico flotante (línea actual)
+- `<leader>lp` - Error anterior
+- `<leader>ln` - Siguiente error
+- `<leader>lq` - Lista de diagnósticos (location list)
+- `<leader>ee` - Ver TODOS los errores (texlab + ChkTeX completo)
 
 **Gestión de build/:**
 
@@ -177,6 +190,8 @@ Editor LaTeX con compilación automática y visualización en Okular.
 - `:BuildClean` - Eliminar build/
 - `:BuildRebuild` - Limpiar y recompilar
 - `:PDFCopy` - Copiar PDF a raíz
+- `:LaTeXChkTeX` - Ejecutar solo ChkTeX manualmente
+- `:LaTeXErrors` - Ver análisis completo (texlab + ChkTeX)
 
 **Snippets disponibles:**
 
@@ -185,6 +200,38 @@ Editor LaTeX con compilación automática y visualización en Okular.
 - `sec` - Section con label
 
 **Nota:** VimTeX detecta automáticamente la raíz del proyecto, por lo que puedes trabajar en archivos dentro de subcarpetas y siempre compilará el documento principal.
+
+#### **texlab + ChkTeX (LSP integrado)**
+
+**¿Qué es?**
+
+texlab es el Language Server oficial para LaTeX que proporciona:
+- Autocompletado inteligente de comandos, entornos y referencias
+- Navegación por el código (ir a definición, ver referencias)
+- Análisis de errores en tiempo real mediante ChkTeX integrado
+
+**Diagnósticos en tiempo real:**
+
+texlab ejecuta ChkTeX automáticamente mientras editas (con 500ms de delay) y muestra:
+- **Errores de ChkTeX**: uso incorrecto de comandos, problemas de estilo
+- **Warnings de texlab**: referencias indefinidas, comandos desconocidos
+- **Hints**: sugerencias de mejora
+
+Los diagnósticos aparecen como:
+- Símbolos en la columna lateral (, , , )
+- Subrayados en el código
+- Virtual text al final de la línea
+- Ventanas flotantes con `<leader>le` o `<leader>ee`
+
+**Diferencias entre comandos de errores:**
+- `<leader>le` → Muestra solo el error de la **línea actual** (rápido)
+- `<leader>ee` → Ejecuta ChkTeX completo y muestra **todos los errores** del archivo (detallado)
+- `<leader>lp` / `<leader>ln` → Navega entre errores detectados
+
+**Configuración:**
+- ChkTeX se configura en `~/.chktexrc` (para silenciar warnings molestos)
+- texlab se configura en `lua/plugins/lsp-config.lua`
+- Documentación completa: `docs/LATEX_SETUP.md`
 
 ---
 
