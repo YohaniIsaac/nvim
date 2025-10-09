@@ -1,3 +1,62 @@
+## Requisitos Previos
+
+### Dependencias del Sistema
+
+#### **Arch Linux**
+```bash
+# Herramientas básicas
+sudo pacman -S git curl nodejs npm python python-pip ripgrep fd
+
+# LaTeX (texlive completo)
+sudo pacman -S texlive-most texlive-lang texlive-binextra
+
+# Visualizador PDF
+sudo pacman -S okular
+
+# Herramientas opcionales
+sudo pacman -S clang cmake
+```
+
+#### **Ubuntu/Debian**
+```bash
+# Herramientas básicas
+sudo apt update
+sudo apt install git curl nodejs npm python3 python3-pip ripgrep fd-find
+
+# LaTeX (texlive completo)
+sudo apt install texlive-full texlive-lang-spanish chktex
+
+# Visualizador PDF
+sudo apt install okular
+
+# Herramientas opcionales
+sudo apt install clang cmake
+```
+
+### Configuración de Neovim
+
+1. **Instalar Language Servers** (desde Neovim)
+   ```vim
+   :Mason
+   ```
+   Selecciona e instala: `lua_ls`, `clangd`, `texlab`, `html`, `cssls`
+
+### Verificación de LaTeX
+
+Para verificar que LaTeX está correctamente configurado:
+```bash
+# Verificar texlive
+latex --version
+
+# Verificar ChkTeX
+chktex --version
+
+# Verificar texlab (después de instalar desde Mason)
+~/.local/share/nvim/mason/bin/texlab --version
+```
+
+---
+
 ## Plugins
 
 ### Explorador de Archivos
