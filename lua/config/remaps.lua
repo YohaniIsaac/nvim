@@ -564,6 +564,7 @@ vim.keymap.set("n", "<leader>ts", translate("n", "ES", "split"),
 vim.keymap.set("v", "<leader>ts", translate("v", "ES", "split"),
     vim.tbl_extend("force", translate_opts, { desc = "Translate in split window" }))
 
+
 -- ============================================
 -- LATEX - VIMTEX KEYMAPS
 -- ============================================
@@ -573,9 +574,8 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         local opts = { buffer = true, noremap = true, silent = true }
 
-        -- ============================================
         -- COMPILATION
-        -- ============================================
+
         vim.keymap.set('n', '<leader>ll', '<cmd>VimtexCompile<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Compilar' }))
 
@@ -585,16 +585,14 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set('n', '<leader>lk', '<cmd>VimtexStop<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Detener compilación' }))
 
-        -- ============================================
         -- DISPLAY
-        -- ============================================
+
         vim.keymap.set('n', '<leader>lv', function()
             _G.latex_open_pdf_okular()
         end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver PDF en Okular' }))
 
-        -- ============================================
         -- NAVIGATION AND INFO
-        -- ============================================
+
         vim.keymap.set('n', '<leader>lt', '<cmd>VimtexTocOpen<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Tabla de contenidos' }))
 
@@ -604,9 +602,8 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set('n', '<leader>ls', '<cmd>VimtexStatus<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Estado compilación' }))
 
-        -- ============================================
         -- LSP DIAGNOSTICS
-        -- ============================================
+
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition,
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Ir a definición' }))
 
@@ -635,9 +632,8 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set('n', '<leader>lw', '<cmd>VimtexCountWords<CR>',
             vim.tbl_extend('force', opts, { desc = 'LaTeX: Contar palabras' }))
 
-        -- ============================================
         -- BUILD/ MANAGEMENT
-        -- ============================================
+
         vim.keymap.set('n', '<leader>lb', function()
             _G.latex_rebuild_clean()
         end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Recompilar desde cero' }))
@@ -651,3 +647,65 @@ vim.api.nvim_create_autocmd("FileType", {
         end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Copiar PDF a raíz' }))
     end,
 })
+
+-- ============================================
+-- CUSTOM CODE CHECKER (OXYCONTROLLER)
+-- ============================================
+vim.keymap.set('n', '<leader>cc', function()
+    -- Get the file path relative to the git root
+    local file = vim.fn.expand('%')
+    local git_root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('\n', '')
+
+    -- Check if we're in the oxycontroller project
+    if git_root:match('oxycontroller$') then
+        -- Calculate floating window dimensions (80% of screen)
+        local width = math.floor(vim.o.columns * 0.8)
+        local height = math.floor(vim.o.lines * 0.8)
+        local row = math.floor((vim.o.lines - height) / 2)
+        local col = math.floor((vim.o.columns - width) / 2)
+
+        -- Create a buffer for the floating window
+        local buf = vim.api.nvim_create_buf(false, true)
+
+        -- Define floating window configuration
+        local opts = {
+            relative = 'editor',
+            width = width,
+            height = height,
+            row = row,
+            col = col,
+            style = 'minimal',
+            border = 'rounded',
+            title = ' Code Checker ',
+            title_pos = 'center',
+        }
+
+        -- Open the floating window
+        local win = vim.api.nvim_open_win(buf, true, opts)
+
+        -- Start the terminal in the floating window
+        vim.fn.termopen('cd ' .. vim.fn.shellescape(git_root) ..
+                        ' && ./scripts/checker -k ' .. vim.fn.shellescape(file), {
+            on_exit = function()
+                -- When the command finishes, switch to normal mode automatically
+                vim.cmd('stopinsert')
+            end
+        })
+
+        -- Set keymaps to close the floating window easily
+        vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = buf, silent = true })
+        vim.keymap.set('n', '<Esc>', '<cmd>close<cr>', { buffer = buf, silent = true })
+
+        -- Start in insert mode but switch to normal mode after command finishes
+        vim.cmd('startinsert')
+
+        -- Wait a bit and then switch to normal mode to allow navigation
+        vim.defer_fn(function()
+            if vim.api.nvim_win_is_valid(win) then
+                vim.cmd('stopinsert')
+            end
+        end, 100)
+    else
+        vim.notify('Not in oxycontroller project!', vim.log.levels.WARN)
+    end
+end, { desc = 'Check code with custom checker script (floating)' })
