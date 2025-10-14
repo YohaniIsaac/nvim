@@ -364,6 +364,10 @@ Traducción de texto con Google Translate.
 - `:TranslateHelp` - Ayuda completa
 - `:TranslateEngine {motor}` - Cambiar motor de traducción
 
+#### **checker en oxycontroller**
+
+- `<leader>cc` - Usar script de chequeo, abre una ventana flotante (no genera contexto de compilación)
+
 #### **Markdown Preview**
 Vista previa de Markdown en navegador.
 
