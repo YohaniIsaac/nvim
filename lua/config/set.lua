@@ -32,7 +32,7 @@ vim.opt.incsearch = true            -- Incremental search
 -- Visual and colors
 -- ============================================
 vim.opt.termguicolors = true        -- 24-bit colors
-vim.opt.colorcolumn = "100"         -- Line of sight in column 100
+vim.opt.colorcolumn = "120"         -- Line of sight in column 120
 
 -- ============================================
 -- Scroll option
