@@ -45,10 +45,10 @@ return {
         "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWx'...oNN0xlcccclodxk0KNWMMMMMMMWO,.............;ookNWMNKXWMMMMMMMMMMMMMNKKXXXNNWWWWWMMK:......:KMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
         "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWO,...;OWWXNWWWKXWMMMMMMMMMMMMMMMXc............;oxkKWMWXOXWMMWMWXXMMMMMMWk,'',;;::ccclo0Wx.....;0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
         "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWx....cKMXoxWW0kXMMMMMMMMMMMMMMMMWd............dWMMMMMXoxWMMMWOldXMMMMMMMMO'..',;;;;;;:cxN0;..;OWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..'kWMO,lNMWWMMMMWx,..'lKNxcdXMK:..........,OMMMMWO,'OMMK:.;0W0o0MMMMMMMXc...,;;:::ccco0WNWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..cXMWd'oWMWMMMMWNklcclxOd'..dW0;..........:KMMMMXc.;KMKc.'xWKcoNMMMMMMMNl...;:ccccccco0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0;.'xWMNo'dWMMMMMW0c...........lN0;,,.....':':XMMMWk'.lXXo..oNKc,kMMMMMMMMWo...;::cc::ccl0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN0ol0NNWd'dWMMMMM0;............:K0:do.....:x::XMMMXc..l0x'.:KNo.cKMMMMMMMMWx...',;:::::cl0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..'kWMO,lNMWWMMMMWx,..'lKNxcdXMK:..........,OMMMMWO,'OMMK:.;0W0o0MMMMMMMXc...,;;:::ccco0WNWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..cXMWd'oWMWMMMMWNklcclxOd'..dW0;..........:KMMMMXc.;KMKc.'xWKcoNMMMMMMMNl...;:ccccccco0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0;.'xWMNo'dWMMMMMW0c...........lN0;,,.....':':XMMMWk'.lXXo..oNKc,kMMMMMMMMWo...;::cc::ccl0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN0ol0NNWd'dWMMMMM0;............:K0:do.....:x::XMMMXc..l0x'.:KNo.cKMMMMMMMMWx...',;:::::cl0WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
         }
 
         dashboard.section.header.val = logo
@@ -56,12 +56,22 @@ return {
         -- ============================================
         -- DASHBOARD BUTTONS
         -- ============================================
-        dashboard.section.buttons.val = {
-            dashboard.button("󰇘", "  Oxycontroller", ":Neotree /home/yt/git/oxycontroller <CR>"),
-            dashboard.button("󰇘", "  Zephyr innovex", ":Neotree /home/yt/git/zephyr_innovex <CR>"),
-            dashboard.button("󰇘", "  Git Proyects", ":Neotree /home/yt/git <CR>"),
-            dashboard.button("󰇘", "  Neovim config", ":Neotree /home/yt/.config/nvim <CR>"),
+        -- Default buttons (for work environment)
+        local default_buttons = {
+            dashboard.button("󰇘", "  Oxycontroller", ":Neotree /home/yt/git/oxycontroller <CR>"),
+            dashboard.button("󰇘", "  Zephyr innovex", ":Neotree /home/yt/git/zephyr_innovex <CR>"),
+            dashboard.button("󰇘", "  Git Proyects", ":Neotree /home/yt/git <CR>"),
+            dashboard.button("󰇘", "  Neovim config", ":Neotree /home/yt/.config/nvim <CR>"),
         }
+
+        -- Try to load local configuration
+        local buttons = default_buttons
+        local ok, local_buttons = pcall(require, "local.dashboard_buttons")
+        if ok and local_buttons then
+            buttons = local_buttons
+        end
+
+        dashboard.section.buttons.val = buttons
 
         for _, button in ipairs(dashboard.section.buttons.val) do
             button.opts.hl = "AlphaButtons"
@@ -118,7 +128,7 @@ return {
 
                 local line1 = "󰐫 " .. plugins_count .. " plugins loaded in " .. ms .. "ms"
                 local line2 = "󰃭 " .. date .. "  󱑎 " .. time
-                local line3 = " " .. version
+                local line3 = " " .. version
 
                 local line1_width = vim.fn.strdisplaywidth(line1)
                 local line2Padded = string.rep(" ", (line1_width - vim.fn.strdisplaywidth(line2)) / 2) .. line2
