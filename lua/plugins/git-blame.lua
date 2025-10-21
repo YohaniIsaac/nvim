@@ -10,14 +10,11 @@ return {
             -- GIT BLAME CONFIGURATION
             -- ============================================
             require('gitblame').setup({
-                enabled = true,
+                enabled = false, -- Disabled by default, use :GitBlameToggle to enable
                 message_template = '<author> • <date> • <summary>',
                 date_format = '%r', -- Relative date format (e.g., "2 hours ago")
                 message_when_not_committed = 'No commiteado aún',
             })
-
-            -- Ensure it activates on startup
-            vim.cmd('GitBlameEnable')
 
             -- ============================================
             -- CUSTOM COLOR FOR GIT BLAME TEXT

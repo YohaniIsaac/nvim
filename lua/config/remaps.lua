@@ -467,6 +467,11 @@ vim.keymap.set("n", "<leader>fw", ":LazyGit<CR>",
 vim.keymap.set("n", "<leader>gl", ":LazyGit<CR>",
     vim.tbl_extend('force', git_opts, { desc = "Open LazyGit (alt)" }))
 
+-- Git Blame Float (visual selection)
+vim.keymap.set("v", "<leader>gv", function()
+    require("config.git-blame-float").show_blame_float()
+end, vim.tbl_extend('force', git_opts, { desc = "Show git blame in floating window" }))
+
 -- ============================================
 -- WINDOW PICKER - VISUAL WINDOW SELECTION
 -- ============================================

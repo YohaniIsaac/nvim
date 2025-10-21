@@ -311,11 +311,20 @@ Interfaz gráfica de Git.
 - `<leader>gl` - Abrir LazyGit (alternativo)
 
 #### **Git Blame**
-Muestra información de Git inline.
+Muestra información de Git blame inline y en ventana flotante.
 
 **Características:**
-- Se activa automáticamente
-- Muestra autor, fecha y resumen
+- **Desactivado por defecto** (para activar: `:GitBlameToggle`)
+- Blame inline: muestra autor, fecha y resumen al final de cada línea
+- Blame flotante: selecciona código en modo visual y usa `<leader>gv` para ver historial completo con diffs
+
+**Uso:**
+- `:GitBlameToggle` - Activar/desactivar blame inline
+- `:GitBlameEnable` - Activar blame inline
+- `:GitBlameDisable` - Desactivar blame inline
+- `<leader>gv` (modo visual) - Ver git log -L de selección en ventana flotante
+  - Muestra: commit hash, autor, fecha, mensaje, diff completo con syntax highlighting
+- Ventana flotante: presiona `q` o `Esc` para cerrar
 
 ---
 
@@ -446,6 +455,7 @@ Emojis animados en pantalla (diversión).
 | `<leader>fw` | LazyGit |
 | `<leader>gs` | Git status |
 | `<leader>gb` | Ver ramas |
+| `<leader>gv` (visual) | Git blame flotante |
 
 ### Traducción
 
