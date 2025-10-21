@@ -64,12 +64,24 @@ chktex --version
 #### **Neo-tree**
 Explorador de archivos moderno con soporte para Git.
 
-**Uso:**
+**Uso básico:**
 - `Ctrl+n` - Abrir/cerrar Neo-tree
-- `H` (dentro de Neo-tree) - Mostrar/ocultar archivos ocultos
 - `Enter` - Abrir archivo
 - `O` - Abrir con selector de ventana
+- `H` - Mostrar/ocultar archivos ocultos
 - `F5` - Refrescar vista
+
+**Gestión de archivos:**
+- `a` - Crear nuevo archivo (termina con `/` para crear carpeta)
+- `d` - Eliminar archivo/carpeta (pide confirmación)
+- `r` - Renombrar archivo/carpeta
+- `c` - Copiar archivo
+- `m` - Mover/cortar archivo
+- `p` - Pegar archivo copiado/cortado
+- `y` - Copiar ruta al clipboard
+
+**Ayuda:**
+- `?` - Ver todos los comandos disponibles
 
 ---
 
