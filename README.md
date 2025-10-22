@@ -272,6 +272,14 @@ Editor LaTeX con compilación automática y visualización en Okular.
 
 **Nota:** VimTeX detecta automáticamente la raíz del proyecto, por lo que puedes trabajar en archivos dentro de subcarpetas y siempre compilará el documento principal.
 
+**Control de concealment (ocultamiento de comandos):**
+
+VimTeX oculta ciertos comandos LaTeX (como `\vspace{}`, `\hspace{}`, etc.) para mejorar la legibilidad. Para controlar esto:
+
+- `:set conceallevel=0` - Mostrar todo (sin ocultamiento)
+- `:set conceallevel=1` - Ocultar parcialmente
+- `:set conceallevel=2` - Ocultar completamente (por defecto en muchos setups)
+
 #### **texlab + ChkTeX (LSP integrado)**
 
 **¿Qué es?**
