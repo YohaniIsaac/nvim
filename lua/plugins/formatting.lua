@@ -13,15 +13,32 @@ return {
                 c = { "clang_format" },
                 cpp = { "clang_format" },
                 h = { "clang_format" },
+                javascript = { "prettier" },
+                typescript = { "prettier" },
+                javascriptreact = { "prettier" },
+                typescriptreact = { "prettier" },
+                json = { "prettier" },
+                jsonc = { "prettier" },
+                html = { "prettier" },
+                css = { "prettier" },
+                scss = { "prettier" },
+                markdown = { "prettier" },
+                yaml = { "prettier" },
+                lua = { "prettier" },
             },
 
             -- ============================================
-            -- CLANG-FORMAT CONFIGURATION
+            -- FORMATTERS CONFIGURATION
             -- ============================================
             formatters = {
                 clang_format = {
                     -- Use the project's .clang-format file
                     prepend_args = { "--style=file" },
+                },
+                prettier = {
+                    -- Explicitly set prettier command
+                    command = "prettier",
+                    args = { "--stdin-filepath", "$FILENAME" },
                 },
             },
         },

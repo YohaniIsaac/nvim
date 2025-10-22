@@ -80,3 +80,17 @@ vim.api.nvim_set_hl(0, "CursorLineNr", {
     bold = true,     -- Bold type
     bg = "NONE"      -- Bottomless
 })
+
+-- ============================================
+-- MARKDOWN SPECIFIC SETTINGS
+-- ============================================
+-- Enable line wrapping for markdown files
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "md" },
+    callback = function()
+        vim.opt_local.wrap = true           -- Enable line wrapping
+        vim.opt_local.linebreak = true      -- Break lines at word boundaries
+        vim.opt_local.breakindent = true    -- Maintain indentation on wrapped lines
+        vim.opt_local.showbreak = "↪ "      -- Show character at the start of wrapped lines
+    end,
+})
