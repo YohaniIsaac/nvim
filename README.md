@@ -393,9 +393,16 @@ Traducción de texto con Google Translate.
 - `:TranslateHelp` - Ayuda completa
 - `:TranslateEngine {motor}` - Cambiar motor de traducción
 
-#### **checker en oxycontroller**
+#### **Code Checker (Oxycontroller)**
 
-- `<leader>cc` - Usar script de chequeo, abre una ventana flotante (no genera contexto de compilación)
+Ejecuta el script `./scripts/checker` en el proyecto oxycontroller.
+
+**Uso:**
+- `<leader>cc` - Ejecutar checker sobre archivo actual (ventana flotante)
+  - Solo funciona dentro del proyecto oxycontroller
+  - Muestra resultados en ventana flotante (80% del tamaño de pantalla)
+  - Presiona `q` o `Esc` para cerrar
+  - Ejecuta: `./scripts/checker -k <archivo_actual>`
 
 #### **Markdown Preview**
 Vista previa de Markdown en navegador.
@@ -436,8 +443,9 @@ Emojis animados en pantalla (diversión).
 | `Ctrl+e` | Menú Harpoon |
 | `<leader>1-6` | Saltar a archivo marcado |
 | `Ctrl+Arrow` | Moverse entre ventanas |
-| `Alt+Arrow` | Intercambiar ventanas |
+| `Alt+Arrow` | Intercambiar ventanas (swap) |
 | `Ctrl+Shift+Arrow` | Redimensionar ventanas |
+| `<leader>w` | Selector visual de ventanas |
 
 ### Edición
 
@@ -449,6 +457,8 @@ Emojis animados en pantalla (diversión).
 | `Ctrl+c` | Copiar (visual) |
 | `Ctrl+v` | Pegar |
 | `<leader>ya` | Copiar todo el archivo |
+| `Ctrl+j` (insert) | Scroll documento hacia abajo |
+| `Ctrl+k` (insert) | Scroll documento hacia arriba |
 
 ### Buffers
 
@@ -459,6 +469,7 @@ Emojis animados en pantalla (diversión).
 | `Shift+Tab` | Buffer anterior |
 | `<leader>c` | Cerrar buffer |
 | `<leader>bd` | Cerrar buffer (alternativo) |
+| `<leader>bn` | Cerrar buffer y abrir siguiente |
 
 ### Terminal
 
@@ -512,6 +523,14 @@ Emojis animados en pantalla (diversión).
 | `Tab` | Siguiente sugerencia |
 | `Shift+Tab` | Sugerencia anterior |
 | `Enter` | Confirmar |
+
+### Utilidades
+
+| Atajo | Acción |
+|-------|--------|
+| `<leader>cc` | Code checker (oxycontroller) |
+| `<leader>fz` | FZF Files |
+| `Ctrl+k` (archivo .md) | Toggle Markdown preview |
 
 ---
 
