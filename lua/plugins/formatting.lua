@@ -25,6 +25,7 @@ return {
                 markdown = { "prettier" },
                 yaml = { "prettier" },
                 lua = { "prettier" },
+                python = { "ruff_format" },
             },
 
             -- ============================================
@@ -39,6 +40,11 @@ return {
                     -- Explicitly set prettier command
                     command = "prettier",
                     args = { "--stdin-filepath", "$FILENAME" },
+                },
+                ruff_format = {
+                    command = "ruff",
+                    args = { "format", "$FILENAME" },
+                    stdin = false,
                 },
             },
         },
