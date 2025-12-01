@@ -110,32 +110,46 @@ Navegación rápida entre archivos marcados.
 - `Ctrl+e` - Menú de archivos marcados
 - `<leader>1` a `<leader>6` - Saltar a archivo marcado
 
-#### **Marks (Marcas nativas de Vim)**
-Sistema nativo de Vim para marcar posiciones específicas en el código.
+#### **Marks.nvim - Marcas visuales**
+Sistema de marcas mejorado con indicadores visuales en la columna izquierda.
 
 **Crear marcas:**
 - `m{a-z}` - Crear marca local (solo en el archivo actual)
 - `m{A-Z}` - Crear marca global (entre archivos)
-- `m'` - Marca automática de la última posición
+- `m;` - Toggle marca automática (usa siguiente letra disponible)
 
 **Saltar a marcas:**
 - `'{marca}` - Saltar a la línea de la marca
 - `` `{marca} `` - Saltar a la posición exacta (línea y columna)
+- `m]` - Siguiente marca
+- `m[` - Marca anterior
 - `''` - Volver a la posición anterior al último salto
-- `` `` `` - Volver a la posición exacta anterior
 
-**Ver marcas:**
-- `:marks` - Ver todas las marcas
-- `:marks {marca}` - Ver una marca específica
-- `:delmarks {marca}` - Eliminar una marca
-- `:delmarks!` - Eliminar todas las marcas locales (a-z)
+**Gestionar marcas:**
+- `dm` - Eliminar marca bajo el cursor
+- `dm-` - Eliminar todas las marcas del buffer
+- `dm=` - Eliminar todas las marcas en la línea actual
+- `<leader>dma` - Eliminar todas las marcas locales (a-z) del buffer
+- `<leader>dmA` - Eliminar TODAS las marcas (locales + globales)
+- `m:` - Preview de la marca (ventana flotante)
+- `<leader>m` - Navegador visual de marcas (snacks.nvim)
+
+**Bookmarks especiales:**
+- `m0` - Set bookmark (marcador con símbolo ⚑)
+- `dm0` - Eliminar bookmark
+- `m0]` / `m0[` - Navegar entre bookmarks
+
+**Características visuales:**
+- Las marcas se muestran en la columna izquierda con sus letras
+- Diferentes colores para marcas locales (a-z) y globales (A-Z)
+- Actualización automática cada 250ms
 
 **Ejemplos de uso:**
-- `ma` - Marca la línea actual como 'a'
+- `ma` - Marca la línea actual como 'a' (aparece "a" en la columna izquierda)
 - `'a` - Salta a la línea de la marca 'a'
-- `` `a `` - Salta a la posición exacta de 'a'
-- `mA` - Marca global 'A' (funciona entre archivos)
-- `:marks` - Lista todas las marcas activas
+- `m]` - Salta a la siguiente marca en el buffer
+- `m;` - Marca rápida (usa siguiente letra disponible)
+- `m0` - Crea un bookmark con símbolo ⚑
 
 #### **FZF**
 Integración de FZF para búsquedas rápidas.
@@ -441,6 +455,39 @@ Vista previa de Markdown en navegador.
 - `:MarkdownPreviewToggle` - Alternar vista vista previa (solo en .md)
 - Se abre en http://127.0.0.1:8888
 
+#### **Snacks.nvim**
+Colección de plugins de calidad de vida (40+ módulos).
+
+**Características principales:**
+
+**Marks visuales:**
+- Indicadores de marcas en la columna izquierda
+- `<leader>m` - Navegador de marcas
+
+**Notificaciones:**
+- Sistema de notificaciones mejorado
+- `<leader>nh` - Historial de notificaciones
+- `<leader>nd` - Descartar notificaciones
+
+**Scratch buffers (buffers temporales):**
+- `<leader>.` - Abre/cierra un buffer temporal para notas o pruebas
+  - Se guarda automáticamente en disco
+  - Persiste entre sesiones de Neovim
+  - Útil para código de prueba, notas rápidas, snippets temporales
+- `<leader>S` - Selecciona entre múltiples scratch buffers
+  - Puedes tener varios scratch buffers para diferentes propósitos
+
+**Buffer delete mejorado:**
+- `<leader>bd` - Cierra el buffer actual sin romper el layout de ventanas
+  - Problema normal: `:bdelete` cierra ventanas si ese buffer está abierto múltiples veces
+  - Con snacks: Cierra el buffer pero mantiene todas las ventanas abiertas
+
+**Funcionalidades automáticas:**
+- Smooth scrolling automático
+- Indent guides visuales
+- LSP word references (resalta referencias automáticamente)
+- Bigfile handling (optimiza archivos grandes >1MB)
+
 #### **Window Picker**
 Selector visual de ventanas.
 
@@ -473,6 +520,23 @@ Emojis animados en pantalla (diversión).
 | `Alt+Arrow` | Intercambiar ventanas (swap) |
 | `Ctrl+Shift+Arrow` | Redimensionar ventanas |
 | `<leader>w` | Selector visual de ventanas |
+
+### Marks
+
+| Atajo | Acción |
+|-------|--------|
+| `m{a-z}` | Crear marca local |
+| `m{A-Z}` | Crear marca global |
+| `m;` | Marca automática |
+| `'{marca}` | Saltar a marca |
+| `m]` / `m[` | Siguiente/anterior marca |
+| `dm` | Eliminar marca bajo cursor |
+| `dm-` | Eliminar todas las marcas |
+| `<leader>dma` | Eliminar marcas locales (a-z) |
+| `<leader>dmA` | Eliminar TODAS las marcas |
+| `m:` | Preview marca |
+| `<leader>m` | Navegador de marcas |
+| `m0` | Bookmark especial |
 
 ### Edición
 
@@ -558,6 +622,17 @@ Emojis animados en pantalla (diversión).
 | `<leader>cc` | Code checker (oxycontroller) |
 | `<leader>fz` | FZF Files |
 | `Ctrl+k` (archivo .md) | Toggle Markdown preview |
+
+### Snacks.nvim
+
+| Atajo | Acción |
+|-------|--------|
+| `<leader>m` | Navegador de marcas |
+| `<leader>nh` | Historial notificaciones |
+| `<leader>nd` | Descartar notificaciones |
+| `<leader>.` | Scratch buffer temporal |
+| `<leader>S` | Seleccionar scratch buffer |
+| `<leader>bd` | Delete buffer (mejorado) |
 
 ---
 
