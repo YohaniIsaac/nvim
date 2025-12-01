@@ -110,6 +110,33 @@ Navegación rápida entre archivos marcados.
 - `Ctrl+e` - Menú de archivos marcados
 - `<leader>1` a `<leader>6` - Saltar a archivo marcado
 
+#### **Marks (Marcas nativas de Vim)**
+Sistema nativo de Vim para marcar posiciones específicas en el código.
+
+**Crear marcas:**
+- `m{a-z}` - Crear marca local (solo en el archivo actual)
+- `m{A-Z}` - Crear marca global (entre archivos)
+- `m'` - Marca automática de la última posición
+
+**Saltar a marcas:**
+- `'{marca}` - Saltar a la línea de la marca
+- `` `{marca} `` - Saltar a la posición exacta (línea y columna)
+- `''` - Volver a la posición anterior al último salto
+- `` `` `` - Volver a la posición exacta anterior
+
+**Ver marcas:**
+- `:marks` - Ver todas las marcas
+- `:marks {marca}` - Ver una marca específica
+- `:delmarks {marca}` - Eliminar una marca
+- `:delmarks!` - Eliminar todas las marcas locales (a-z)
+
+**Ejemplos de uso:**
+- `ma` - Marca la línea actual como 'a'
+- `'a` - Salta a la línea de la marca 'a'
+- `` `a `` - Salta a la posición exacta de 'a'
+- `mA` - Marca global 'A' (funciona entre archivos)
+- `:marks` - Lista todas las marcas activas
+
 #### **FZF**
 Integración de FZF para búsquedas rápidas.
 
