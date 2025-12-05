@@ -5,6 +5,7 @@ return {
     {
         'neoclide/coc.nvim',
         branch = 'release',
+        enabled = false,  -- Deshabilitado para usar nvim-lspconfig
         config = function()
             -- ============================================
             -- GLOBAL EXTENSIONS
