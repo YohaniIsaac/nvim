@@ -193,6 +193,28 @@ Motor LSP alternativo con clangd.
 
 ### Edición de Código
 
+#### **Búsqueda y Reemplazo**
+Buscar y reemplazar palabras con confirmación interactiva.
+
+**Uso:**
+- `<leader>p` - Buscar y reemplazar palabra bajo cursor
+  - Coloca el cursor sobre una palabra
+  - Presiona `<leader>p` (espacio + p)
+  - Escribe el texto de reemplazo
+  - Presiona Enter
+  - Para cada ocurrencia te preguntará:
+    - `y` - reemplazar esta ocurrencia
+    - `n` - saltar esta ocurrencia
+    - `a` - reemplazar todas las restantes
+    - `q` o `Esc` - cancelar
+
+**Ejemplo:**
+1. Coloca el cursor sobre la palabra `foo`
+2. Presiona `<leader>p`
+3. Escribe `bar`
+4. Presiona Enter
+5. Confirma cada reemplazo con `y` o `n`
+
 #### **Comment.nvim**
 Comentar/descomentar código fácilmente.
 
@@ -544,6 +566,7 @@ Emojis animados en pantalla (diversión).
 |-------|--------|
 | `gc` | Comentar/descomentar |
 | `<leader>kk` | Formatear código |
+| `<leader>p` | Buscar y reemplazar palabra bajo cursor |
 | `Ctrl+s` | Guardar (con limpieza) |
 | `Ctrl+c` | Copiar (visual) |
 | `Ctrl+v` | Pegar |
