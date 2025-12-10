@@ -468,14 +468,25 @@ Ejecuta el script `./scripts/checker` en el proyecto oxycontroller.
   - Ejecuta: `./scripts/checker -k <archivo_actual>`
 
 #### **Markdown Preview**
-Vista previa de Markdown en navegador.
+Vista previa de Markdown en navegador con actualización en vivo.
 
-**Uso:**
-- `Ctrl+k` - Alternar vista previa (solo en .md)
-- `:MarkdownPreview` - Vista previa (solo en .md)
-- `:MarkdownPreviewStop` - Detener vista previa (solo en .md)
-- `:MarkdownPreviewToggle` - Alternar vista vista previa (solo en .md)
+**Características:**
+- Vista previa en tiempo real mientras editas
+- Se actualiza automáticamente al guardar
+- Soporta sintaxis de GitHub-flavored Markdown
 - Se abre en http://127.0.0.1:8888
+
+**Uso (solo en archivos .md):**
+- `<leader>lv` - Abrir vista previa en navegador
+- `<leader>lk` - Detener vista previa
+- `<leader>lt` - Alternar vista previa (toggle)
+
+**Comandos alternativos:**
+- `:MarkdownPreview` - Abrir vista previa
+- `:MarkdownPreviewStop` - Detener vista previa
+- `:MarkdownPreviewToggle` - Alternar vista previa
+
+**Nota:** Los atajos `<leader>l*` funcionan igual que LaTeX para facilitar la memorización. El atajo se adapta automáticamente según el tipo de archivo (.tex o .md).
 
 #### **Snacks.nvim**
 Colección de plugins de calidad de vida (40+ módulos).
@@ -638,13 +649,24 @@ Emojis animados en pantalla (diversión).
 | `Shift+Tab` | Sugerencia anterior |
 | `Enter` | Confirmar |
 
+### Markdown
+
+| Atajo | Acción |
+|-------|--------|
+| `<leader>lv` | Abrir vista previa en navegador |
+| `<leader>lk` | Detener vista previa |
+| `<leader>lt` | Alternar vista previa |
+
+**Nota:** Los atajos `<leader>l*` son compartidos con LaTeX para facilitar la memorización:
+- En archivos `.tex` → `<leader>lv` abre el PDF en Okular
+- En archivos `.md` → `<leader>lv` abre la vista previa en el navegador
+
 ### Utilidades
 
 | Atajo | Acción |
 |-------|--------|
 | `<leader>cc` | Code checker (oxycontroller) |
 | `<leader>fz` | FZF Files |
-| `Ctrl+k` (archivo .md) | Toggle Markdown preview |
 
 ### Snacks.nvim
 

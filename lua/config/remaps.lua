@@ -654,6 +654,27 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- ============================================
+-- MARKDOWN - MARKDOWN-PREVIEW KEYMAPS
+-- ============================================
+-- These keymaps are only available in files .md
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "markdown",
+    callback = function()
+        local opts = { buffer = true, noremap = true, silent = true }
+
+        -- VISUALIZATION
+        vim.keymap.set('n', '<leader>lv', '<cmd>MarkdownPreview<CR>',
+            vim.tbl_extend('force', opts, { desc = 'Markdown: Abrir vista previa en navegador' }))
+
+        vim.keymap.set('n', '<leader>lk', '<cmd>MarkdownPreviewStop<CR>',
+            vim.tbl_extend('force', opts, { desc = 'Markdown: Detener vista previa' }))
+
+        vim.keymap.set('n', '<leader>lt', '<cmd>MarkdownPreviewToggle<CR>',
+            vim.tbl_extend('force', opts, { desc = 'Markdown: Alternar vista previa' }))
+    end,
+})
+
+-- ============================================
 -- CUSTOM CODE CHECKER (OXYCONTROLLER)
 -- ============================================
 vim.keymap.set('n', '<leader>cc', function()
