@@ -280,14 +280,25 @@ Editor LaTeX con compilación automática y visualización en Okular.
 
 **Compilación:**
 
-- `<leader>ll` - Iniciar compilación continua
+- `<leader>ll` - Iniciar compilación continua (latexmk detecta cambios automáticamente)
 - `<leader>lk` - Detener compilación
 - `<leader>lc` - Limpiar archivos auxiliares
 - `<leader>lb` - Recompilar desde cero (elimina build/)
 
+**Cómo funciona la compilación continua:**
+1. Presiona `<leader>ll` para iniciar
+2. latexmk se queda escuchando cambios en todos los archivos `.tex` del proyecto
+3. Cada vez que guardas (`Ctrl+s`), latexmk detecta el cambio y recompila automáticamente
+4. El PDF se actualiza automáticamente en Okular sin necesidad de reabrir
+5. Usa `<leader>lk` para detener la compilación continua cuando termines
+
 **Visualización:**
 
-- `<leader>lv` - Abrir PDF en Okular (busca en build/)
+- `<leader>lv` - Abrir PDF en Okular (busca automáticamente en build/)
+  - Detecta el archivo principal del proyecto automáticamente
+  - Funciona desde archivos secundarios (no necesitas estar en el main.tex)
+  - Si no encuentra el PDF específico, busca cualquier PDF en build/ como fallback
+  - **Tip:** Para proyectos multi-archivo, agrega `% !TEX root = main.tex` al inicio de archivos secundarios
 - Click en PDF (Shift+Click) - Sincroniza Okular → Neovim
 
 **Navegación:**
@@ -333,7 +344,20 @@ Editor LaTeX con compilación automática y visualización en Okular.
 - `fig` - Entorno figure con includegraphics
 - `sec` - Section con label
 
-**Nota:** VimTeX detecta automáticamente la raíz del proyecto, por lo que puedes trabajar en archivos dentro de subcarpetas y siempre compilará el documento principal.
+**Nota sobre proyectos multi-archivo:**
+
+VimTeX detecta automáticamente la raíz del proyecto y el archivo principal, por lo que puedes trabajar en archivos dentro de subcarpetas y siempre compilará el documento principal.
+
+**Para proyectos con estructura multi-archivo:**
+- VimTeX intenta detectar automáticamente cuál es el archivo principal (el que tiene `\documentclass`)
+- Si la detección automática falla, agrega este comentario al inicio de tus archivos secundarios:
+  ```latex
+  % !TEX root = main.tex
+  % O si está en un subdirectorio:
+  % !TEX root = ../main.tex
+  ```
+- Después de agregar el comentario, recarga con `:VimtexReload` o `<leader>rr`
+- Una vez configurado, todos los comandos (`<leader>ll`, `<leader>lv`, etc.) funcionarán correctamente desde cualquier archivo del proyecto
 
 **Control de concealment (ocultamiento de comandos):**
 
@@ -665,6 +689,7 @@ Emojis animados en pantalla (diversión).
 
 | Atajo | Acción |
 |-------|--------|
+| `<leader>rr` | Recargar configuración completa de Neovim |
 | `<leader>cc` | Code checker (oxycontroller) |
 | `<leader>fz` | FZF Files |
 

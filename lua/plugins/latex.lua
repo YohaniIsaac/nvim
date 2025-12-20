@@ -88,15 +88,38 @@ return {
                     return
                 end
 
-                -- Get the project root and main file name
-                local project_root = vimtex_data.root or vim.fn.expand('%:p:h')
-                local main_name = vimtex_data.name or vim.fn.expand('%:t:r')
+                -- Get the project root (ALWAYS use VimTeX root, not current directory)
+                local project_root = vimtex_data.root
+
+                if not project_root then
+                    vim.notify('No se pudo detectar el root del proyecto\nAsegúrate de estar en un proyecto LaTeX válido',
+                        vim.log.levels.WARN)
+                    return
+                end
+
+                -- Get main file name from VimTeX
+                -- vimtex_data.tex contains the full path to the main .tex file
+                local main_name = nil
+
+                if vimtex_data.tex then
+                    -- Extract basename without extension from full path
+                    main_name = vim.fn.fnamemodify(vimtex_data.tex, ':t:r')
+                elseif vimtex_data.name then
+                    -- Fallback to name if tex is not available
+                    main_name = vimtex_data.name
+                end
 
                 -- Build possible PDF paths (from the project root)
-                local pdf_paths = {
-                    project_root .. '/build/' .. main_name .. '.pdf',  -- Root/build/main.pdf
-                    project_root .. '/' .. main_name .. '.pdf',        -- Root/main.pdf
-                }
+                local pdf_paths = {}
+                local search_info_paths = {}
+
+                if main_name then
+                    pdf_paths = {
+                        project_root .. '/build/' .. main_name .. '.pdf',  -- Root/build/main.pdf
+                        project_root .. '/' .. main_name .. '.pdf',        -- Root/main.pdf
+                    }
+                    search_info_paths = { pdf_paths[1], pdf_paths[2] }
+                end
 
                 -- Find the PDF in the possible locations
                 local pdf_path = nil
@@ -107,18 +130,42 @@ return {
                     end
                 end
 
-                -- If not found, display error message with searched paths
+                -- FALLBACK: Search for ANY PDF in build/ directory
                 if not pdf_path then
+                    local build_dir = project_root .. '/build'
+                    if vim.fn.isdirectory(build_dir) == 1 then
+                        local pdf_files = vim.fn.glob(build_dir .. '/*.pdf', false, true)
+                        if #pdf_files > 0 then
+                            pdf_path = pdf_files[1]  -- Use first PDF found
+                            vim.notify(string.format(
+                                'Archivo principal no encontrado, usando: %s',
+                                vim.fn.fnamemodify(pdf_path, ':t')
+                            ), vim.log.levels.WARN)
+                        end
+                    end
+                    table.insert(search_info_paths, build_dir .. '/*.pdf (fallback)')
+                end
+
+                -- If still not found, display error message with searched paths
+                if not pdf_path then
+                    local paths_str = ''
+                    for i, path in ipairs(search_info_paths) do
+                        paths_str = paths_str .. '• ' .. path
+                        if i < #search_info_paths then
+                            paths_str = paths_str .. '\n'
+                        end
+                    end
+
                     local search_info = string.format(
                         'PDF no encontrado\n\n' ..
                         'Raíz del proyecto: %s\n' ..
                         'Archivo principal: %s.tex\n\n' ..
-                        'Buscado en:\n• %s\n• %s\n\n' ..
-                        'Compila primero con <leader>ll',
+                        'Buscado en:\n%s\n\n' ..
+                        'Compila primero con <leader>ll\n' ..
+                        'Tip: Agrega "%%%% !TEX root = main.tex" en archivos secundarios',
                         project_root,
-                        main_name,
-                        pdf_paths[1],
-                        pdf_paths[2]
+                        main_name or 'desconocido',
+                        paths_str
                     )
                     vim.notify(search_info, vim.log.levels.WARN)
                     return

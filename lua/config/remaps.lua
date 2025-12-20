@@ -735,3 +735,23 @@ vim.keymap.set('n', '<leader>cc', function()
         vim.notify('Not in oxycontroller project!', vim.log.levels.WARN)
     end
 end, { desc = 'Check code with custom checker script (floating)' })
+
+-- ============================================
+-- RELOAD NEOVIM CONFIGURATION
+-- ============================================
+vim.keymap.set('n', '<leader>rr', function()
+    -- Clear module cache for local modules
+    for name, _ in pairs(package.loaded) do
+        if name:match('^lua') or name:match('^config') or name:match('^plugins') then
+            package.loaded[name] = nil
+        end
+    end
+
+    -- Reload init.lua
+    dofile(vim.env.MYVIMRC)
+
+    -- Restart LSP servers
+    vim.cmd('LspRestart')
+
+    vim.notify('Configuración recargada completamente', vim.log.levels.INFO)
+end, { desc = 'Recargar configuración completa de Neovim' })
