@@ -687,47 +687,11 @@ Conclusiones.
             end
 
             -- ============================================
-            -- BASIC SNIPPETS
+            -- CUSTOM SNIPPETS
             -- ============================================
-            local luasnip_status, luasnip = pcall(require, 'luasnip')
-            if luasnip_status then
-                local s = luasnip.snippet
-                local t = luasnip.text_node
-                local i = luasnip.insert_node
-
-                luasnip.add_snippets("tex", {
-                    s("eq", {
-                        t("\\begin{equation}"),
-                        t({"", "\t"}),
-                        i(1),
-                        t({"", "\\end{equation}"}),
-                    }),
-
-                    s("fig", {
-                        t("\\begin{figure}[h]"),
-                        t({"", "\t\\centering"}),
-                        t({"", "\t\\includegraphics[width=0.8\\textwidth]{"}),
-                        i(1, "ruta/imagen"),
-                        t("}"),
-                        t({"", "\t\\caption{"}),
-                        i(2, "Descripción"),
-                        t("}"),
-                        t({"", "\t\\label{fig:"}),
-                        i(3, "etiqueta"),
-                        t("}"),
-                        t({"", "\\end{figure}"}),
-                    }),
-
-                    s("sec", {
-                        t("\\section{"),
-                        i(1, "Título"),
-                        t("}"),
-                        t({"", "\\label{sec:"}),
-                        i(2, "etiqueta"),
-                        t("}"),
-                    }),
-                })
-            end
+            -- NOTE: Custom snippets are defined in the luasnip-latex-snippets
+            -- plugin configuration below to ensure they load AFTER the plugin
+            -- and don't get overwritten.
 
             -- ============================================
             -- EXPORT FUNCTIONS FOR REMAPS
@@ -741,14 +705,94 @@ Conclusiones.
     },
 
     -- ============================================
-    -- ADDITIONAL SNIPPETS
+    -- CUSTOM LATEX SNIPPETS
     -- ============================================
+    -- NOTE: luasnip-latex-snippets.nvim is disabled because it conflicts
+    -- with custom snippets. We define our own snippets below.
     {
-        "iurimateus/luasnip-latex-snippets.nvim",
-        dependencies = { "L3MON4D3/LuaSnip" },
+        "L3MON4D3/LuaSnip",
         ft = "tex",
         config = function()
-            require('luasnip-latex-snippets').setup()
+            local luasnip = require('luasnip')
+            local s = luasnip.snippet
+            local t = luasnip.text_node
+            local i = luasnip.insert_node
+            local f = luasnip.function_node
+            local rep = require("luasnip.extras").rep
+
+            -- Clear any existing tex snippets to avoid conflicts
+            luasnip.filetype_extend("tex", {})
+
+            -- Add custom snippets with HIGHEST priority
+            luasnip.add_snippets("tex", {
+                -- Figure with center environment
+                -- Trigger: fig<Tab>
+                s({
+                    trig = "fig",
+                    dscr = "Figure with center, includegraphics, caption and label",
+                    priority = 1000,
+                }, {
+                    t("\\begin{figure}"),
+                    t({"", "    \\begin{center}"}),
+                    t({"", "        \\includegraphics[width=0.95\\textwidth]{figures/"}),
+                    i(1, "imagen"),
+                    t("}"),
+                    t({"", "    \\end{center}"}),
+                    t({"", "    \\caption{"}),
+                    i(2, "Descripción"),
+                    t("}\\label{fig:"),
+                    i(3, "etiqueta"),
+                    t("}"),
+                    t({"", "\\end{figure}"}),
+                }),
+
+                -- Equation environment
+                -- Trigger: eq<Tab>
+                s({
+                    trig = "eq",
+                    dscr = "Equation environment",
+                    priority = 1000,
+                }, {
+                    t("\\begin{equation}"),
+                    t({"", "    "}),
+                    i(1),
+                    t({"", "\\end{equation}"}),
+                }),
+
+                -- Section with label
+                -- Trigger: sec<Tab>
+                s({
+                    trig = "sec",
+                    dscr = "Section with label",
+                    priority = 1000,
+                }, {
+                    t("\\section{"),
+                    i(1, "Título"),
+                    t("}"),
+                    t({"", "\\label{sec:"}),
+                    i(2, "etiqueta"),
+                    t("}"),
+                }),
+
+                -- Begin/End generic
+                -- Trigger: beg<Tab>
+                s({
+                    trig = "beg",
+                    dscr = "Generic begin/end environment",
+                    priority = 1000,
+                }, {
+                    t("\\begin{"),
+                    i(1, "env"),
+                    t("}"),
+                    t({"", "    "}),
+                    i(2),
+                    t({"", "\\end{"}),
+                    rep(1),
+                    t("}"),
+                }),
+            }, {
+                key = "custom_latex",
+            })
         end,
     },
 }

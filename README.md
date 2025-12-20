@@ -340,9 +340,42 @@ Editor LaTeX con compilación automática y visualización en Okular.
 
 **Snippets disponibles:**
 
-- `eq` - Entorno equation
-- `fig` - Entorno figure con includegraphics
-- `sec` - Section con label
+Los siguientes snippets personalizados están configurados con alta prioridad:
+
+- `fig` + Tab → Figure completo con center, includegraphics, caption y label
+  ```latex
+  \begin{figure}
+      \begin{center}
+          \includegraphics[width=0.95\textwidth]{figures/|cursor|}
+      \end{center}
+      \caption{}
+      \label{fig:}
+  \end{figure}
+  ```
+
+- `eq` + Tab → Entorno equation
+  ```latex
+  \begin{equation}
+      |cursor|
+  \end{equation}
+  ```
+
+- `sec` + Tab → Section con label
+  ```latex
+  \section{Título}
+  \label{sec:etiqueta}
+  ```
+
+- `beg` + Tab → Entorno genérico begin/end
+  ```latex
+  \begin{environment}
+      |cursor|
+  \end{environment}
+  ```
+
+**Tip:** Escribe el trigger y presiona Tab para expandir el snippet. Usa Tab para saltar entre los campos editables.
+
+**Agregar más snippets:** Edita `lua/plugins/latex.lua` en la sección "CUSTOM LATEX SNIPPETS".
 
 **Nota sobre proyectos multi-archivo:**
 
@@ -715,6 +748,35 @@ Emojis animados en pantalla (diversión).
 :TranslateHelp        " Ayuda de traducción
 :PythonDocHelp        " Ayuda de docstrings
 ```
+
+### Recargar Configuración
+
+**Opción 1: Atajo rápido (recomendado)**
+```vim
+<leader>rr            " Recarga completa (limpia cache + reinicia LSP)
+```
+
+**Opción 2: Manual paso a paso**
+```vim
+" 1. Recargar init.lua
+:source $MYVIMRC
+
+" 2. Recargar archivo Lua específico (si estás editando uno)
+:luafile %
+
+" 3. Reiniciar LSP servers
+:LspRestart
+
+" 4. Recargar plugin específico (con Lazy)
+:Lazy reload <nombre-plugin>
+:Lazy reload latex.lua
+
+" 5. Limpiar cache de módulos Lua (en línea de comandos Lua)
+:lua for k,_ in pairs(package.loaded) do if k:match("^lua") or k:match("^config") or k:match("^plugins") then package.loaded[k] = nil end end
+:source $MYVIMRC
+```
+
+**Tip:** Después de modificar snippets o configuración de LaTeX, usa `<leader>rr` para aplicar los cambios sin cerrar Neovim.
 
 ### Git
 ```vim
