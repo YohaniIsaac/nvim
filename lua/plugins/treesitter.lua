@@ -5,28 +5,21 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        config = function()
-            local configs = require("nvim-treesitter.configs")
-            configs.setup({
-                -- ============================================
-                -- LANGUAGE PARSERS
-                -- ============================================
-                ensure_installed = {"python", "lua", "c", "javascript", "cmake", "yaml"},
+        opts = {
+            -- ============================================
+            -- LANGUAGE PARSERS
+            -- ============================================
+            ensure_installed = {"python", "lua", "c", "javascript", "cmake", "yaml"},
 
-                -- ============================================
-                -- MODULES
-                -- ============================================
-                highlight = {
-                    enable = true,
-                    additional_vim_regex_highlighting = { "python" }
-                },
-                indent = { enable = true },
-                fold = {
-                    enable = true,
-                    disable = {},
-                }
-            })
-        end
+            -- ============================================
+            -- MODULES
+            -- ============================================
+            highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = { "python" }
+            },
+            indent = { enable = true },
+        },
     },
     -- ============================================
     -- TREESITTER CONTEXT - SHOW CURRENT CONTEXT

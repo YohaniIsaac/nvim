@@ -1,5 +1,7 @@
 # Neovim Configuration
 
+> `<leader>nh` → Notification history (historial de notificaciones)
+
 ## Índice
 
 - [Requisitos Previos](#requisitos-previos)

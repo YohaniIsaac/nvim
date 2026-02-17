@@ -22,7 +22,7 @@ return {
                 ensure_installed = {
                     "lua_ls",       -- lua
                     "clangd",       -- C/C++
-                    "cmake",        -- CMake
+                    -- "cmake",     -- CMake (descomentar cuando se necesite)
                     "cssls",        -- CSS
                     "html",         -- HTML
                     "texlab"        -- LaTeX
@@ -113,7 +113,7 @@ return {
             -- ============================================
             -- ENABLE LSP SERVERS
             -- ============================================
-            vim.lsp.enable({'lua_ls', 'clangd', 'cmake', 'cssls', 'html', 'texlab'})
+            vim.lsp.enable({'lua_ls', 'clangd', 'cssls', 'html', 'texlab'})
 
             -- ============================================
             -- LSP KEYBINDINGS

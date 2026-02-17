@@ -35,7 +35,7 @@ return {
                             function()
                                 return os.date("%H:%M")
                             end,
-                            icon = '🕒' -- Clock icon
+                            icon = '' -- Clock icon
                         },
                     },
                 }
