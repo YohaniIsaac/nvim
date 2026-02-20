@@ -238,7 +238,7 @@ vim.keymap.set("n", "<C-S-Left>", "<Cmd>vertical resize -1<CR>", { noremap = tru
 -- FILE OPERATIONS
 -- ============================================
 -- Word replacement with confirmation
-vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//c<Left><Left>', { noremap = true, desc = "Replace word under cursor (with confirmation)" })
+vim.keymap.set('n', '<leader>p', ':%s/\\<<C-r><C-w>\\>//gc<Left><Left><Left>', { noremap = true, desc = "Replace word under cursor (with confirmation)" })
 
 -- Smart save with whitespace cleaning option
 vim.keymap.set('n', '<C-s>', ':write<CR>', { noremap = true, silent = true })
