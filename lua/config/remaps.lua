@@ -524,7 +524,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- ============================================
--- MARKDOWN - MARKDOWN-PREVIEW KEYMAPS
+-- MARKDOWN - RENDER-MARKDOWN KEYMAPS
 -- ============================================
 -- These keymaps are only available in files .md
 vim.api.nvim_create_autocmd("FileType", {
@@ -532,15 +532,9 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         local opts = { buffer = true, noremap = true, silent = true }
 
-        -- VISUALIZATION
-        vim.keymap.set('n', '<leader>lv', '<cmd>MarkdownPreview<CR>',
-            vim.tbl_extend('force', opts, { desc = 'Markdown: Abrir vista previa en navegador' }))
-
-        vim.keymap.set('n', '<leader>lk', '<cmd>MarkdownPreviewStop<CR>',
-            vim.tbl_extend('force', opts, { desc = 'Markdown: Detener vista previa' }))
-
-        vim.keymap.set('n', '<leader>lt', '<cmd>MarkdownPreviewToggle<CR>',
-            vim.tbl_extend('force', opts, { desc = 'Markdown: Alternar vista previa' }))
+        -- Toggle rendering on/off (por defecto siempre está activo)
+        vim.keymap.set('n', '<leader>lv', '<cmd>RenderMarkdown toggle<CR>',
+            vim.tbl_extend('force', opts, { desc = 'Markdown: Alternar renderizado inline' }))
     end,
 })
 
