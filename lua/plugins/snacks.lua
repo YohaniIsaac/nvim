@@ -7,6 +7,46 @@ return {
     lazy = false,
     opts = {
         -- ============================================
+        -- IMAGE VIEWER
+        -- ============================================
+        -- Muestra imágenes directamente en nvim (Kitty nativo)
+        -- Formatos directos: png, jpg, gif, webp, bmp, tiff, avif
+        -- Formatos con ImageMagick: pdf, mp4, mkv, heic, etc.
+        -- Para instalar: sudo pacman -S imagemagick
+        image = {
+            enabled = true,
+            doc = {
+                enabled = true,   -- muestra imágenes embebidas en markdown
+                inline = true,    -- renderiza inline en el buffer
+                float = true,     -- fallback a ventana flotante
+                max_width = 80,
+                max_height = 40,
+            },
+        },
+
+        -- ============================================
+        -- PICKER - REEMPLAZA TELESCOPE
+        -- ============================================
+        picker = {
+            enabled = true,
+            ui_select = true,   -- reemplaza vim.ui.select (antes: telescope-ui-select)
+            sources = {
+                files = {
+                    hidden = true,
+                    ignored = true,
+                    follow = true,
+                    exclude = { ".git", ".venv", "build", ".cache" },
+                },
+                grep = {
+                    hidden = true,
+                    ignored = true,
+                    follow = true,
+                    exclude = { ".git", ".venv", "build", ".cache", "*.hex" },
+                },
+            },
+        },
+
+        -- ============================================
         -- VISUAL MARKS WITH INDICATORS
         -- ============================================
         -- Disabled to preserve default line numbers and sign column
@@ -163,6 +203,31 @@ return {
     -- ============================================
     -- Note: Additional keymaps are configured in lua/config/remaps.lua
     keys = {
+        -- ============================================
+        -- PICKER - BÚSQUEDA DE ARCHIVOS Y TEXTO
+        -- ============================================
+        { "<leader>pf", function() require("snacks").picker.files() end,      desc = "Find files" },
+        { "<C-p>",      function() require("snacks").picker.git_files() end,  desc = "Find git-tracked files" },
+        { "<leader>ps", function() require("snacks").picker.grep() end,       desc = "Live grep" },
+        { "<leader>ff", function() require("snacks").picker.grep({ cwd = vim.fn.getcwd() }) end, desc = "Live grep in cwd" },
+        { "<leader>fg", function() require("snacks").picker.grep() end,       desc = "Live grep (hidden)" },
+        { "<leader>gg", function() require("snacks").picker.grep_word() end,  desc = "Grep word under cursor" },
+        { "<leader>gw", function() require("snacks").picker.grep_word() end,  desc = "Grep word under cursor (full)" },
+
+        -- Búsqueda avanzada con exclusiones personalizadas
+        { "<leader>fe", function()
+            local term = vim.fn.input("Buscar término: ")
+            if term == "" then return end
+            local excl = vim.fn.input("Excluir (separados por coma): ")
+            local exclude = { ".git", ".venv", "build", ".cache", "*.hex" }
+            if excl ~= "" then
+                for e in excl:gmatch("([^,]+)") do
+                    table.insert(exclude, vim.trim(e))
+                end
+            end
+            require("snacks").picker.grep({ search = term, exclude = exclude })
+        end, desc = "Grep with custom exclusions" },
+
         -- Marks navigation (uses picker)
         { "<leader>m", function() require("snacks").picker.marks() end, desc = "Browse marks" },
 
