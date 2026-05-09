@@ -463,7 +463,7 @@ vim.api.nvim_create_autocmd("FileType", {
         -- DISPLAY
 
         vim.keymap.set('n', '<leader>lv', function()
-            _G.latex_open_pdf_okular()
+            _G.latex_open_pdf_zathura()
         end, vim.tbl_extend('force', opts, { desc = 'LaTeX: Ver PDF en Okular' }))
 
         -- NAVIGATION AND INFO

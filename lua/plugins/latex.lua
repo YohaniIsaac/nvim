@@ -32,13 +32,11 @@ return {
             }
 
             -- ============================================
-            -- VISOR PDF - OKULAR
+            -- VISOR PDF - ZATHURA
             -- ============================================
-            vim.g.vimtex_view_method = 'general'
-            vim.g.vimtex_view_general_viewer = 'okular'
-            vim.g.vimtex_view_general_options = '--unique file:@pdf\\#src:@line@tex'
+            vim.g.vimtex_view_method = 'zathura'
 
-            -- Reverse sync (from Okular to Neovim)
+            -- Inverse search (Ctrl+click en Zathura → salta a línea en Neovim)
             vim.g.vimtex_compiler_progname = 'nvr'
 
             -- ============================================
@@ -78,7 +76,7 @@ return {
             -- AUXILIARY FUNCTIONS
             -- ============================================
             -- Open PDF in Okular (search in build/ from the project root)
-            local function open_pdf_okular()
+            local function open_pdf_zathura()
                 -- Using VimTeX variables to get the project root
                 local vimtex_data = vim.b.vimtex
 
@@ -171,23 +169,23 @@ return {
                     return
                 end
 
-                -- Verify that Okular is installed
-                if vim.fn.executable('okular') == 0 then
-                    vim.notify('Okular no está instalado\nInstala con: sudo pacman -S okular',
+                -- Verify that Zathura is installed
+                if vim.fn.executable('zathura') == 0 then
+                    vim.notify('Zathura no está instalado\nInstala con: sudo pacman -S zathura zathura-pdf-mupdf',
                         vim.log.levels.ERROR)
                     return
                 end
 
-                -- Get current .tex file and line for synchronization
+                -- Get current .tex file and line for synctex forward search
                 local tex_file = vim.fn.expand('%:p')
                 local current_line = vim.fn.line('.')
 
-                -- Open Okular with synchronization
+                -- Open Zathura with synctex forward search
                 local cmd = string.format(
-                    'okular --unique "file:%s#src:%d %s" > /dev/null 2>&1 &',
-                    pdf_path,
+                    'zathura --synctex-forward "%d:0:%s" "%s" > /dev/null 2>&1 &',
                     current_line,
-                    tex_file
+                    tex_file,
+                    pdf_path
                 )
 
                 vim.fn.system(cmd)
@@ -619,7 +617,7 @@ Conclusiones.
                     vim.fn.filereadable(pdf_root) == 1 and "✓ Sí" or "✗ No",
                     log_file,
                     vim.fn.filereadable(log_file) == 1 and "✓ Sí" or "✗ No",
-                    vim.fn.executable('okular') == 1 and "✓ Sí" or "✗ No",
+                    vim.fn.executable('zathura') == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('latexmk') == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('texlab') == 1 and "✓ Sí" or "✗ No",
                     vim.fn.executable('chktex') == 1 and "✓ Sí" or "✗ No",
@@ -697,7 +695,7 @@ Conclusiones.
             -- EXPORT FUNCTIONS FOR REMAPS
             -- ============================================
             -- Make functions globally accessible
-            _G.latex_open_pdf_okular = open_pdf_okular
+            _G.latex_open_pdf_zathura = open_pdf_zathura
             _G.latex_rebuild_clean = rebuild_clean
             _G.latex_clean_build_dir = clean_build_dir
             _G.latex_copy_pdf_to_root = copy_pdf_to_root
