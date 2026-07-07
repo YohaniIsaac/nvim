@@ -343,6 +343,44 @@ vim.keymap.set("v", "<leader>gv", function()
 end, vim.tbl_extend('force', git_opts, { desc = "Show git blame in floating window" }))
 
 -- ============================================
+-- GIT DIFF / CONFLICT RESOLUTION (FUGITIVE)
+-- ============================================
+
+-- Never fold unchanged lines in diff mode: always show the full file
+vim.opt.diffopt:append("context:999999")
+
+-- Auto-unfold when entering diff mode (belt and suspenders alongside diffopt context)
+vim.api.nvim_create_autocmd("OptionSet", {
+    pattern = "diff",
+    callback = function()
+        if vim.v.option_new == true or vim.v.option_new == 1 then
+            vim.cmd("normal! zR")
+        end
+    end,
+})
+
+-- Diff current file (working tree/HEAD) against a revision you type in (e.g. upstream/dev)
+vim.keymap.set("n", "<leader>gd", function()
+    local rev = vim.fn.input("Diff against revision: ", "upstream/dev")
+    if rev ~= "" then
+        vim.cmd("Gvdiffsplit " .. rev)
+    end
+end, vim.tbl_extend('force', git_opts, { desc = "Diff current file against a revision (Fugitive)" }))
+
+-- Quick diff current file against upstream/dev
+vim.keymap.set("n", "<leader>gU", ":Gvdiffsplit upstream/dev<CR>",
+    vim.tbl_extend('force', git_opts, { desc = "Diff current file against upstream/dev" }))
+
+-- Load the HEAD version of the current file into the buffer (useful before diffing
+-- against another revision, to make sure you're comparing HEAD and not a dirty working tree)
+vim.keymap.set("n", "<leader>gH", ":Gedit HEAD:%<CR>",
+    vim.tbl_extend('force', git_opts, { desc = "Load HEAD version of current file (Fugitive)" }))
+
+-- Merge conflict resolution: 3-way vertical diff split
+vim.keymap.set("n", "<leader>gm", ":Gvdiffsplit!<CR>",
+    vim.tbl_extend('force', git_opts, { desc = "Resolve merge conflict (3-way vertical diff)" }))
+
+-- ============================================
 -- WINDOW PICKER - VISUAL WINDOW SELECTION
 -- ============================================
 vim.keymap.set('n', '<leader>w',

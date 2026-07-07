@@ -7,7 +7,7 @@ return {
     -- ============================================
     {
         "tpope/vim-fugitive",
-        cmd = { "Git" }, -- Only load the plugin when you run a related command
+        cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gread", "Gwrite", "Gstatus" }, -- Only load the plugin when you run a related command
         config = function()
         end,
     },

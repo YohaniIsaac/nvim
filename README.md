@@ -33,6 +33,7 @@
     - [texlab + ChkTeX](#texlab--chktex-lsp-integrado)
   - [Git](#git)
     - [Vim Fugitive](#vim-fugitive)
+    - [Diff / Resolución de conflictos](#diff--resolución-de-conflictos)
     - [LazyGit](#lazygit)
     - [Git Blame](#git-blame)
   - [Apariencia](#apariencia)
@@ -505,6 +506,16 @@ Herramienta Git integrada.
 **Uso:**
 - `<leader>gs` - Git status
 - `<leader>gb` - Ver ramas
+
+#### **Diff / Resolución de conflictos**
+Comandos para comparar revisiones y resolver conflictos de merge/rebase con vistas verticales sincronizadas (scroll y cursor bindeados) y sin folds (siempre se ve el archivo completo).
+
+**Uso:**
+- `<leader>gd` - Pide una revisión (por defecto `upstream/dev`) y abre un diff vertical del archivo actual contra ella
+- `<leader>gU` - Diff vertical rápido del archivo actual contra `upstream/dev`
+- `<leader>gH` - Carga la versión `HEAD` del archivo actual en el buffer (útil antes de diffear si hay cambios sin commitear)
+- `<leader>gm` - Resolver conflicto de merge/rebase: abre el 3-way diff vertical (`Gvdiffsplit!`)
+- `zR` - Desplegar todos los folds en la ventana de diff actual (ya aplicado automáticamente al entrar en modo diff)
 
 #### **LazyGit**
 Interfaz gráfica de Git.
